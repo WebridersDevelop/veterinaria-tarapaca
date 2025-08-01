@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Veterinaria Tarapacá</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vet-orange': '#ff9500',
+                        'vet-orange-light': '#ffb347',
+                        'vet-brown': '#8B4513',
+                        'vet-gray': '#f8f9fa'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- TikTok Embed Script -->
+    <script async src="https://www.tiktok.com/embed.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-50 transition-all duration-300">
+            <div class="max-w-6xl mx-auto px-6 flex justify-between items-center h-24">
+                <div class="flex items-center gap-4">
+                    <img src="images/logo.png" alt="Veterinaria Tarapacá" class="h-16 md:h-20 w-auto">
+                    <div>
+                        <h1 class="text-vet-brown font-poppins font-bold text-xl md:text-2xl">Veterinaria Tarapacá</h1>
+                        <p class="text-vet-orange text-sm font-medium">Dra. Javiera Solis Larenas</p>
+                    </div>
+                </div>
+                <!-- Botón menú móvil -->
+                <button id="menu-toggle" type="button" class="inline-flex items-center p-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="sidebar-menu" aria-expanded="false">
+                    <span class="sr-only">Abrir menú</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path></svg>
+                </button>
+                <!-- Menú horizontal escritorio -->
+                <ul class="hidden md:flex md:flex-row md:space-x-8 md:bg-transparent md:shadow-none md:rounded-none">
+                    <li class="flex items-center"><a href="#inicio" class="block px-3 py-1 text-gray-700 hover:text-vet-orange font-medium rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-base tracking-wide">Inicio</a></li>
+                    <li class="flex items-center"><a href="#servicios" class="block px-3 py-1 text-gray-700 hover:text-vet-orange font-medium rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-base tracking-wide">Servicios</a></li>
+                    <li class="flex items-center"><a href="#equipo" class="block px-3 py-1 text-gray-700 hover:text-vet-orange font-medium rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-base tracking-wide">Sobre Nosotros</a></li>
+                    <li class="flex items-center"><a href="#contacto" class="block px-3 py-1 text-gray-700 hover:text-vet-orange font-medium rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-base tracking-wide">Contacto</a></li>
+                    <li class="flex items-center"><a href="#tiktok" class="block px-3 py-1 text-gray-700 hover:text-vet-orange rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-lg" title="TikTok"><i class="fab fa-tiktok"></i></a></li>
+                    <li class="flex items-center"><a href="#instagram" class="block px-3 py-1 text-gray-700 hover:text-vet-orange rounded-xl hover:bg-vet-orange/10 transition-all duration-200 text-lg" title="Instagram"><i class="fab fa-instagram"></i></a></li>
+                </ul>
+            </div>
+            <!-- Sidebar menú móvil -->
+            <aside id="sidebar-menu" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg-white shadow-2xl md:hidden" aria-label="Sidebar">
+                <div class="h-full px-3 py-4 overflow-y-auto">
+                    <button id="menu-close" type="button" class="absolute top-4 right-4 text-gray-500 hover:text-vet-orange focus:outline-none">
+                        <span class="sr-only">Cerrar menú</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                    <ul class="space-y-2 font-medium mt-10">
+                        <li><a href="#inicio" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">Inicio</a></li>
+                        <li><a href="#servicios" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">Servicios</a></li>
+                        <li><a href="#equipo" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">Sobre Nosotros</a></li>
+                        <li><a href="#contacto" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">Contacto</a></li>
+                        <li><a href="#tiktok" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group" title="TikTok"><i class="fab fa-tiktok text-lg"></i></a></li>
+                        <li><a href="#instagram" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group" title="Instagram"><i class="fab fa-instagram text-lg"></i></a></li>
+                    </ul>
+                </div>
+            </aside>
+            <!-- Overlay para sidebar -->
+            <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/40 z-30 md:hidden transition-opacity duration-300"></div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio" class="relative min-h-[120vh] bg-gradient-to-br from-vet-orange via-vet-orange-light to-vet-orange flex items-center justify-center text-center text-white pt-32 md:pt-36 pb-12 md:pb-16 overflow-hidden">
+            <!-- Formas orgánicas de fondo -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3 animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-vet-brown/20 rounded-full blur-2xl transform -translate-x-1/4 translate-y-1/4 animate-bounce"></div>
+            <div class="absolute top-1/3 left-1/4 w-32 h-32 bg-white/5 rounded-full animate-float"></div>
+            
+            <div class="relative z-10 max-w-6xl mx-auto px-4 md:px-6">
+                <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    <!-- Contenido de texto -->
+                    <div class="text-center lg:text-left order-2 lg:order-1">
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold font-poppins mb-4 md:mb-6 drop-shadow-lg leading-tight">
+                            Cuidamos a tu mejor amigo
+                        </h2>
+                        <p class="text-base md:text-lg lg:text-xl xl:text-2xl mb-6 md:mb-8 opacity-90 font-light leading-relaxed">
+                            Dra. Javiera Solis Larenas - Atención veterinaria profesional con amor y dedicación
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
+                            <button class="bg-vet-brown hover:bg-vet-brown/90 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cta-button">
+                                Agendar Cita
+                            </button>
+                            <button class="bg-white/20 hover:bg-white/30 text-white border-2 border-white/50 font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm" onclick="document.querySelector('#tiktok-hero-embed').scrollIntoView({behavior: 'smooth', block: 'center'})">
+                                <i class="fab fa-tiktok mr-2"></i>Ver Video
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Video promocional -->
+                    <div class="relative group max-w-xs mx-auto lg:max-w-sm order-1 lg:order-2 mb-6 lg:mb-0">
+                        <div class="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-500">
+                            <!-- Video de TikTok con tamaño ajustado -->
+                            <div class="aspect-[9/16] relative bg-black/20 flex items-center justify-center h-72 md:h-80 lg:h-96">
+                                <!-- TikTok Player - Video Promocional -->
+                                <div id="tiktok-hero-embed" class="w-full h-full">
+                                    <iframe class="w-full h-full rounded-3xl" 
+                                           style="border-radius:1.5rem;overflow:hidden;box-shadow:0 8px 32px 0 rgba(0,0,0,0.08);" 
+                                           src="https://www.tiktok.com/player/v1/7526978200740597048?autoplay=0&controls=1" 
+                                           allow="fullscreen" 
+                                           title="Video Promocional - Veterinaria Tarapacá">
+                                    </iframe>
+                                </div>
+                                
+                                <!-- Overlay con información -->
+                                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                                    <p class="text-white text-sm font-medium">
+                                        <i class="fab fa-tiktok mr-2"></i>
+                                        Video Promocional - @veterinaria.tarapaca
+                                    </p>
+                                    <p class="text-white/80 text-xs">
+                                        Especialista en endocrinología veterinaria
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Badge decorativo -->
+                        <div class="absolute -top-4 -right-4 bg-vet-orange text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transform rotate-12">
+                            ¡Nuevo!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Forma orgánica inferior -->
+            <div class="absolute bottom-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0V0Z" fill="#f8f9fa"/>
+                </svg>
+            </div>
+        </section>
+
+        <section id="servicios" class="relative pt-10 md:pt-16 pb-20 bg-vet-gray">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl md:text-5xl font-bold text-center text-vet-brown mb-16 font-poppins relative">
+                    Nuestros Servicios
+                    <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-vet-orange to-vet-orange-light rounded-full"></div>
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Consulta Veterinaria -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">🩺</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Consulta Veterinaria</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Revisiones médicas completas y diagnósticos profesionales para el cuidado integral de tu mascota</p>
+                    </div>
+                    
+                    <!-- Consulta Endocrinológica -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">⚕️</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Consulta Endocrinológica</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Especialización única en la región para trastornos hormonales y endocrinos en mascotas</p>
+                        <span class="inline-block bg-vet-orange/10 text-vet-orange text-xs font-medium px-2 py-1 rounded-full mt-2">Especialidad Regional</span>
+                    </div>
+                    
+                    <!-- Laboratorio Clínico -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">🔬</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Laboratorio Clínico</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Análisis clínicos precisos y toma de muestras especializada para diagnósticos certeros</p>
+                    </div>
+                    
+                    <!-- Farmacia -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">💊</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Farmacia</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Medicamentos veterinarios especializados y productos farmacéuticos de alta calidad</p>
+                    </div>
+                    
+                    <!-- Cirugía -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">🏥</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Cirugía</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Procedimientos quirúrgicos con anestesia inhalatoria y equipamiento de última generación</p>
+                        <span class="inline-block bg-vet-brown/10 text-vet-brown text-xs font-medium px-2 py-1 rounded-full mt-2">Alta Tecnología</span>
+                    </div>
+                    
+                    <!-- Alimentos y Accesorios -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">🛍️</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Alimentos y Accesorios</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Amplia variedad de alimentos premium y accesorios esenciales para mascotas</p>
+                    </div>
+                    
+                    <!-- Vacunas -->
+                    <div class="group bg-white p-6 md:p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="text-4xl md:text-5xl mb-4 md:mb-6 relative z-10">💉</div>
+                        <h3 class="text-lg md:text-xl font-semibold text-vet-brown mb-3 md:mb-4 relative z-10">Vacunas</h3>
+                        <p class="text-gray-600 leading-relaxed relative z-10 text-sm md:text-base">Programa completo de vacunación preventiva para mantener protegida a tu mascota</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="equipo" class="relative pt-10 md:pt-16 pb-20 bg-white overflow-hidden">
+            <!-- Formas orgánicas de fondo -->
+            <div class="absolute top-0 left-0 w-64 h-64 bg-vet-orange/5 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 right-0 w-80 h-80 bg-vet-brown/5 rounded-full blur-2xl animate-float"></div>
+            
+            <!-- Transición ondulada superior -->
+            <div class="absolute top-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M1200,0V46.29c-47.79,22.2-103.59,32.17-158,28-70.36-5.37-136.33-33.31-206.8-37.5C761.36,32.43,687.66,53.67,617,72.05c-69.27,18-138.3,24.88-209.4,13.08-36.15-6-69.85-17.84-104.45-29.34C210.51,25,87-14.29,0,52.47V120H1200V0Z" fill="white"/>
+                </svg>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-6 relative z-10 pt-8 md:pt-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-center text-vet-brown mb-20 font-poppins relative">
+                    Sobre Nosotros
+                    <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-vet-orange to-vet-orange-light rounded-full"></div>
+                </h2>
+                
+                <!-- Historia y Equipo - Layout Compartido -->
+                <div class="grid lg:grid-cols-2 gap-12 xl:gap-16 items-start">
+                    
+                    <!-- Columna Izquierda: Historia -->
+                    <div class="space-y-8">
+                        <div class="bg-gradient-to-br from-white to-vet-gray/30 rounded-3xl shadow-2xl p-8 md:p-10 relative overflow-hidden backdrop-blur-sm border border-white/20">
+                            <!-- Elemento decorativo -->
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                            
+                            <div class="relative z-10">
+                                <!-- Año de fundación destacado -->
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-12 h-12 bg-vet-orange rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        🏥
+                                    </div>
+                                    <div>
+                                        <p class="text-vet-orange font-semibold text-sm uppercase tracking-wide">Fundada en</p>
+                                        <p class="text-3xl font-bold text-vet-brown">2021</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-5 text-gray-700 leading-relaxed">
+                                    <p class="text-lg font-medium text-gray-800">
+                                        Comenzamos con <strong class="text-vet-brown">humildes orígenes</strong> en un pequeño local con una mesa de consulta y recepción, impulsados por grandes sueños y la convicción de que el perfeccionamiento continuo sería nuestro pilar fundamental.
+                                    </p>
+                                    
+                                    <p>
+                                        A través de múltiples cursos y diplomados, nos convertimos en <strong class="text-vet-orange">la primera clínica de la región</strong> especializada en <strong class="text-vet-brown">endocrinología veterinaria</strong>, adquiriendo equipamiento especializado.
+                                    </p>
+                                    
+                                    <p>
+                                        Hoy contamos con <strong class="text-vet-brown">anestesia inhalatoria</strong> y equipamiento de última generación para cirugías de alta calidad.
+                                    </p>
+                                </div>
+                                
+                                <!-- Stats destacados -->
+                                <div class="grid grid-cols-2 gap-4 mt-8">
+                                    <div class="bg-vet-orange/10 rounded-xl p-4 text-center">
+                                        <div class="text-2xl font-bold text-vet-brown">3+</div>
+                                        <div class="text-sm text-gray-600">Años de experiencia</div>
+                                    </div>
+                                    <div class="bg-vet-brown/10 rounded-xl p-4 text-center">
+                                        <div class="text-2xl font-bold text-vet-brown">1ra</div>
+                                        <div class="text-sm text-gray-600">En endocrinología regional</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Compromiso -->
+                        <div class="bg-gradient-to-r from-vet-orange/10 via-vet-orange/5 to-transparent rounded-2xl p-6 border-l-4 border-vet-orange">
+                            <p class="text-vet-brown font-semibold text-lg italic leading-relaxed">
+                                "Cada día es una oportunidad de crecimiento para que cada familia tenga acceso a lo mejor de la medicina veterinaria."
+                            </p>
+                            <p class="text-right text-vet-orange font-medium mt-3">- Nuestro Compromiso</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Columna Derecha: Equipo Profesional -->
+                    <div class="lg:sticky lg:top-8">
+                        <div class="bg-gradient-to-br from-white to-vet-gray/30 rounded-3xl shadow-2xl p-8 md:p-10 relative overflow-hidden backdrop-blur-sm border border-white/20">
+                            <!-- Elemento decorativo -->
+                            <div class="absolute bottom-0 left-0 w-32 h-32 bg-vet-brown/5 rounded-full blur-2xl transform -translate-x-1/4 translate-y-1/4"></div>
+                            
+                            <div class="relative z-10 text-center">
+                                <!-- Avatar mejorado -->
+                                <div class="relative mb-8">
+                                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-2xl mx-auto transform hover:scale-105 transition-all duration-300 border-4 border-vet-orange bg-white flex items-center justify-center">
+                                        <img src="images/perfil2.jpg" alt="Dra. Javiera Solis Larenas" class="w-full h-full object-cover rounded-full" loading="lazy">
+                                    </div>
+                                    <!-- Badge de especialidad -->
+                                    <div class="absolute -bottom-2 -right-2 bg-vet-brown text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                        Especialista
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-8">
+                                    <h3 class="text-2xl md:text-3xl font-bold text-vet-brown mb-2 font-poppins">
+                                        Dra. Javiera Solis Larenas
+                                    </h3>
+                                    <p class="text-lg font-semibold text-vet-orange mb-4">
+                                        Médico Veterinario
+                                    </p>
+                                    <div class="flex justify-center gap-2 mb-6">
+                                        <span class="bg-vet-orange/10 text-vet-orange text-xs font-medium px-3 py-1 rounded-full">Endocrinología</span>
+                                        <span class="bg-vet-brown/10 text-vet-brown text-xs font-medium px-3 py-1 rounded-full">Cirugía</span>
+                                    </div>
+                                    <p class="text-gray-600 leading-relaxed mb-8">
+                                        Profesional especializada en endocrinología veterinaria con amplia experiencia en medicina preventiva y procedimientos quirúrgicos de alta complejidad.
+                                    </p>
+                                </div>
+                                
+                                <!-- Especialidades en formato compacto -->
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="bg-white/60 rounded-2xl p-5 backdrop-blur-sm text-left">
+                                        <h4 class="font-semibold text-vet-brown mb-4 flex items-center gap-2">
+                                            <span class="w-3 h-3 bg-vet-orange rounded-full"></span>
+                                            Especialidades
+                                        </h4>
+                                        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Endocrinología</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Medicina Preventiva</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Cirugía General</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Medicina Interna</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Anestesia Inhalatoria</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-vet-orange rounded-full"></div>
+                                                <span>Diagnóstico Avanzado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transición ondulada inferior -->
+            <div class="absolute bottom-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0V0Z" fill="#f8f9fa"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Sección TikTok -->
+        <section id="tiktok" class="relative py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-white overflow-hidden">
+            <!-- Formas orgánicas de fondo -->
+            <div class="absolute top-0 left-0 w-72 h-72 bg-pink-500/10 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-2xl animate-float"></div>
+            
+            <div class="max-w-7xl mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fab fa-tiktok text-3xl md:text-4xl" style="color:#010101;"></i>
+                        </div>
+                        <div class="text-left flex items-center gap-2">
+                            <h2 class="text-4xl md:text-5xl font-bold text-vet-brown font-poppins">TikTok</h2>
+                            <span class="sr-only">TikTok</span>
+                        </div>
+                    </div>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        Consejos veterinarios diarios, casos exitosos y contenido educativo para el mejor cuidado de tu mascota 🐾
+                    </p>
+                </div>
+
+                <!-- TikTok Videos Grid -->
+                <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
+                    <!-- Video 1: El dolor en gatos (TikTok Player) -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-[9/16] relative rounded-t-3xl overflow-hidden flex items-center justify-center bg-black/5">
+                            <iframe class="w-full h-full rounded-t-3xl" style="border-radius:1.5rem 1.5rem 0 0;overflow:hidden;box-shadow:0 8px 32px 0 rgba(0,0,0,0.08);" src="https://www.tiktok.com/player/v1/7531944984648437048?autoplay=0&controls=1" allow="fullscreen" title="El dolor en gatos"></iframe>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2 text-lg">El dolor en gatos</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">Cómo detectar señales de dolor en gatos y cuándo acudir al veterinario</p>
+                            <div class="flex flex-wrap gap-1 mb-4">
+                                <span class="bg-pink-100 text-pink-600 text-xs px-2 py-1 rounded-full font-medium">#dolorengatos</span>
+                                <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full font-medium">#saludfelina</span>
+                                <span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">#consejos</span>
+                            </div>
+                            <a href="https://www.tiktok.com/@veterinaria.tarapaca/video/7531944984648437048" target="_blank" class="text-pink-500 hover:text-pink-600 font-semibold text-sm flex items-center gap-1 group">
+                                Ver video completo 
+                                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Video 2: Caso Candy - Nistagmo (TikTok Player) -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-[9/16] relative rounded-t-3xl overflow-hidden flex items-center justify-center bg-black/5">
+                            <iframe class="w-full h-full rounded-t-3xl" style="border-radius:1.5rem 1.5rem 0 0;overflow:hidden;box-shadow:0 8px 32px 0 rgba(0,0,0,0.08);" src="https://www.tiktok.com/player/v1/7522265262876380421?autoplay=0&controls=1" allow="fullscreen" title="Caso Candy: Nistagmo y Síndrome Vestibular"></iframe>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2 text-lg">Caso Candy: Nistagmo y Síndrome Vestibular</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">La Dra. Javiera explica este caso neurológico complejo y su tratamiento especializado</p>
+                            <div class="flex flex-wrap gap-1 mb-4">
+                                <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">#nistagmo</span>
+                                <span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full font-medium">#casoneurológico</span>
+                                <span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">#drajavierasolís</span>
+                            </div>
+                            <a href="https://www.tiktok.com/@veterinaria.tarapaca/video/7522265262876380421" target="_blank" class="text-blue-500 hover:text-blue-600 font-semibold text-sm flex items-center gap-1 group">
+                                Ver caso completo 
+                                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Video 3: Diabetes Canina (TikTok Player) -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-[9/16] relative rounded-t-3xl overflow-hidden flex items-center justify-center bg-black/5">
+                            <iframe class="w-full h-full rounded-t-3xl" style="border-radius:1.5rem 1.5rem 0 0;overflow:hidden;box-shadow:0 8px 32px 0 rgba(0,0,0,0.08);" src="https://www.tiktok.com/player/v1/7523009107650022662?autoplay=0&controls=1" allow="fullscreen" title="Diabetes Canina: Síntomas y Detección"></iframe>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2 text-lg">Diabetes Canina: Síntomas y Detección</h3>
+                            <p class="text-gray-600 text-sm mb-4">Aprende a identificar los síntomas de diabetes en perros con la Dra. Javiera</p>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">#diabetescanina</span>
+                                <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">#saludanimal</span>
+                                <span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">#educacionveterinaria</span>
+                            </div>
+                            <a href="https://www.tiktok.com/@veterinaria.tarapaca/video/7523009107650022662" target="_blank" class="text-pink-500 hover:text-pink-600 font-medium text-sm">Ver información completa →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TikTok CTA -->
+                <div class="text-center">
+                    <div class="bg-gradient-to-r from-pink-500/10 to-purple-600/10 rounded-3xl p-8 backdrop-blur-sm border border-white/30">
+                        <h3 class="text-2xl font-bold text-vet-brown mb-4">
+                            ¡Síguenos en TikTok!
+                        </h3>
+                        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                            Más de 50 videos con consejos profesionales, casos exitosos y contenido educativo actualizado regularmente.
+                        </p>
+                        <a href="https://www.tiktok.com/@veterinaria.tarapaca" target="_blank" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold py-4 px-8 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                            🎵 Seguir @veterinaria.tarapaca
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transición ondulada inferior -->
+            <div class="absolute bottom-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0V0Z" fill="white"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Sección Instagram -->
+        <section id="instagram" class="relative py-20 bg-white overflow-hidden">
+            <!-- Formas orgánicas de fondo -->
+            <div class="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-2xl animate-float"></div>
+            
+            <!-- Transición ondulada superior -->
+            <div class="absolute top-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M1200,0V46.29c-47.79,22.2-103.59,32.17-158,28-70.36-5.37-136.33-33.31-206.8-37.5C761.36,32.43,687.66,53.67,617,72.05c-69.27,18-138.3,24.88-209.4,13.08-36.15-6-69.85-17.84-104.45-29.34C210.51,25,87-14.29,0,52.47V120H1200V0Z" fill="white"/>
+                </svg>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-6 relative z-10 pt-16">
+                <div class="text-center mb-16">
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+                            📷
+                        </div>
+                        <div class="text-left">
+                            <h2 class="text-4xl md:text-5xl font-bold text-vet-brown font-poppins">Instagram</h2>
+                            <p class="text-xl text-vet-orange font-medium">Reels y Fotos</p>
+                        </div>
+                    </div>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        Historias inspiradoras de nuestros pacientes, tips de cuidado y momentos especiales de la clínica 📸
+                    </p>
+                </div>
+
+                <!-- Instagram Posts Grid -->
+                <div class="grid md:grid-cols-3 gap-6 mb-12">
+                    
+                    <!-- Post 1 - Reel Real -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-[9/16] relative rounded-t-3xl overflow-hidden flex items-center justify-center bg-black/5">
+                            <iframe class="w-full h-full rounded-t-3xl bg-white" style="border-radius:1.5rem 1.5rem 0 0;overflow:hidden;border:none;box-shadow:0 8px 32px 0 rgba(0,0,0,0.08);background:#fff;" allowfullscreen src="https://www.instagram.com/reel/DMqtoA4yaVv/embed" title="Instagram Reel Destacado"></iframe>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2">Reel Destacado</h3>
+                            <p class="text-gray-600 text-sm mb-4">Contenido real de Instagram integrado</p>
+                            <a href="https://www.instagram.com/reel/DMqtoA4yaVv/" target="_blank" class="text-purple-500 hover:text-purple-600 font-medium text-sm">Ver reel →</a>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 - Placeholder -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-square relative bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                            <div class="text-center p-8">
+                                <div class="text-5xl mb-4">🏥</div>
+                                <h3 class="text-xl font-bold text-vet-brown mb-3">Clínica Veterinaria</h3>
+                                <p class="text-gray-600 text-sm mb-4">Instalaciones y equipo médico</p>
+                                <div class="bg-white/60 rounded-full px-4 py-2 text-sm text-vet-brown font-medium">
+                                    📷 Ver en Instagram
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2">Nuestras Instalaciones</h3>
+                            <p class="text-gray-600 text-sm mb-4">Conoce nuestro equipamiento moderno</p>
+                            <a href="#" class="text-purple-500 hover:text-purple-600 font-medium text-sm">Ver fotos →</a>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 - Placeholder -->
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                        <div class="aspect-square relative bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
+                            <div class="text-center p-8">
+                                <div class="text-5xl mb-4">❤️</div>
+                                <h3 class="text-xl font-bold text-vet-brown mb-3">Pacientes Felices</h3>
+                                <p class="text-gray-600 text-sm mb-4">Historias de éxito y recuperación</p>
+                                <div class="bg-white/60 rounded-full px-4 py-2 text-sm text-vet-brown font-medium">
+                                    📷 Ver en Instagram
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-vet-brown mb-2">Casos de Éxito</h3>
+                            <p class="text-gray-600 text-sm mb-4">Mascotas felices y saludables</p>
+                            <a href="#" class="text-purple-500 hover:text-purple-600 font-medium text-sm">Ver historias →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instagram CTA -->
+                <div class="text-center">
+                    <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl p-8 backdrop-blur-sm border border-white/30">
+                        <h3 class="text-2xl font-bold text-vet-brown mb-4">
+                            ¡Síguenos en Instagram!
+                        </h3>
+                        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                            Más de 100 publicaciones con historias inspiradoras, consejos de cuidado y momentos especiales de nuestra clínica.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="https://www.instagram.com/reel/DMqtoA4yaVv/" target="_blank" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4 px-8 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                                📷 Ver Instagram
+                            </a>
+                            <a href="#" class="bg-white text-vet-brown border-2 border-vet-brown font-semibold py-4 px-8 rounded-full hover:bg-vet-brown hover:text-white transition-all duration-300">
+                                📧 Síguenos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transición ondulada inferior -->
+            <div class="absolute bottom-0 left-0 w-full h-20 md:h-32 overflow-hidden">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0V0Z" fill="#f8f9fa"/>
+                </svg>
+            </div>
+
+            <!-- Script para cargar videos bajo demanda -->
+            <script>
+                function loadVideo(placeholder, videoUrl) {
+                    // Crear el iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.src = videoUrl;
+                    iframe.width = '100%';
+                    iframe.height = '100%';
+                    iframe.frameBorder = '0';
+                    iframe.scrolling = 'no';
+                    iframe.allow = 'encrypted-media';
+                    iframe.className = 'rounded-t-3xl';
+                    
+                    // Reemplazar el placeholder con el iframe
+                    const container = placeholder.parentElement;
+                    container.innerHTML = '';
+                    container.appendChild(iframe);
+                }
+            </script>
+            <!-- Solo script de Instagram -->
+            <script async src="//www.instagram.com/embed.js"></script>
+        </section>
+
+        <section id="contacto" class="relative pt-10 md:pt-16 pb-20 bg-vet-gray overflow-hidden">
+            <!-- Formas orgánicas de fondo -->
+            <div class="absolute top-0 right-0 w-72 h-72 bg-vet-orange/5 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-vet-brown/5 rounded-full blur-2xl animate-float"></div>
+            <div class="absolute top-1/2 left-1/3 w-40 h-40 bg-vet-orange/10 rounded-full blur-xl animate-bounce"></div>
+            
+            <div class="max-w-6xl mx-auto px-6 relative z-10">
+                <h2 class="text-4xl md:text-5xl font-bold text-center text-vet-brown mb-16 font-poppins relative">
+                    Contacto
+                    <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-vet-orange to-vet-orange-light rounded-full"></div>
+                </h2>
+                
+                <div class="grid lg:grid-cols-2 gap-12 items-start">
+                    <!-- Información de Contacto -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-white/20 relative overflow-hidden">
+                        <!-- Elemento decorativo -->
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-vet-orange/10 rounded-full blur-xl transform translate-x-1/3 -translate-y-1/3"></div>
+                        
+                        <h3 class="text-2xl font-bold text-vet-brown mb-8 font-poppins relative z-10">
+                            Información de Contacto
+                        </h3>
+                        
+                        <div class="space-y-6 relative z-10">
+                            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-vet-orange/5 to-transparent rounded-2xl hover:from-vet-orange/10 transition-all duration-300">
+                                <div class="w-12 h-12 bg-vet-orange rounded-full flex items-center justify-center text-white text-xl shadow-lg">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-vet-brown">Dirección</p>
+                                    <p class="text-gray-600">Avenida Salvador Allende #3638, Iquique</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-vet-orange/5 to-transparent rounded-2xl hover:from-vet-orange/10 transition-all duration-300">
+                                <div class="w-12 h-12 bg-vet-orange rounded-full flex items-center justify-center text-white text-xl shadow-lg">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-vet-brown">Teléfono</p>
+                                    <p class="text-gray-600">+56 9 XXXX XXXX</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-vet-orange/5 to-transparent rounded-2xl hover:from-vet-orange/10 transition-all duration-300">
+                                <div class="w-12 h-12 bg-vet-orange rounded-full flex items-center justify-center text-white text-xl shadow-lg">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-vet-brown">Email</p>
+                                    <p class="text-gray-600">contacto@veterinariatarapa.cl</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 p-4 bg-gradient-to-r from-vet-brown/5 to-transparent rounded-2xl hover:from-vet-brown/10 transition-all duration-300">
+                                <div class="w-12 h-12 bg-vet-brown rounded-full flex items-center justify-center text-white text-xl shadow-lg">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-vet-brown">Horarios de Atención</p>
+                                    <div class="text-gray-600 text-sm space-y-1">
+                                        <p><strong>Lunes a Viernes:</strong> 10:30 - 19:00 hrs</p>
+                                        <p><strong>Sábado:</strong> 10:30 - 14:00 hrs</p>
+                                        <p><strong>Domingo:</strong> Cerrado</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mapa de Google Maps -->
+                        <div class="mt-8">
+                            <div class="bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg border border-white/30">
+                                <div class="p-4 bg-gradient-to-r from-vet-orange/10 to-vet-brown/10">
+                                    <h4 class="font-semibold text-vet-brown flex items-center gap-2">
+                                        <i class="fas fa-map-marked-alt text-vet-orange"></i>
+                                        Nuestra Ubicación
+                                    </h4>
+                                </div>
+                                <div class="aspect-video">
+                                    <iframe 
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3747.1234567890!2d-70.1313849!3d-20.2583549!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9152159edcad8cc5%3A0x9eb667e0755a589f!2sVeterinaria%20Tarapac%C3%A1!5e0!3m2!1ses!2scl!4v1640995200000!5m2!1ses!2scl"
+                                        width="100%" 
+                                        height="100%" 
+                                        style="border:0; border-radius: 0 0 1rem 1rem;" 
+                                        allowfullscreen="" 
+                                        loading="lazy" 
+                                        referrerpolicy="no-referrer-when-downgrade"
+                                        title="Ubicación Veterinaria Tarapacá - Avenida Salvador Allende 3638, Iquique">
+                                    </iframe>
+                                </div>
+                                <div class="p-3 bg-white/80">
+                                    <p class="text-xs text-gray-600 text-center">
+                                        <i class="fas fa-directions text-vet-orange mr-1"></i>
+                                        Haz clic en el mapa para obtener direcciones
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulario de Contacto -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-white/20 relative overflow-hidden">
+                        <!-- Elemento decorativo -->
+                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-vet-brown/10 rounded-full blur-2xl transform -translate-x-1/4 translate-y-1/4"></div>
+                        
+                        <h3 class="text-2xl font-bold text-vet-brown mb-8 font-poppins relative z-10">
+                            Envíanos un mensaje
+                        </h3>
+                        
+                        <form class="space-y-6 relative z-10">
+                            <div>
+                                <input 
+                                    type="text" 
+                                    placeholder="Nombre" 
+                                    required
+                                    class="w-full px-6 py-4 bg-white/70 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vet-orange focus:border-transparent transition-all duration-300 placeholder-gray-500"
+                                >
+                            </div>
+                            
+                            <div>
+                                <input 
+                                    type="email" 
+                                    placeholder="Email" 
+                                    required
+                                    class="w-full px-6 py-4 bg-white/70 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vet-orange focus:border-transparent transition-all duration-300 placeholder-gray-500"
+                                >
+                            </div>
+                            
+                            <div>
+                                <input 
+                                    type="tel" 
+                                    placeholder="Teléfono"
+                                    class="w-full px-6 py-4 bg-white/70 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vet-orange focus:border-transparent transition-all duration-300 placeholder-gray-500"
+                                >
+                            </div>
+                            
+                            <div>
+                                <textarea 
+                                    placeholder="Mensaje" 
+                                    rows="5" 
+                                    required
+                                    class="w-full px-6 py-4 bg-white/70 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vet-orange focus:border-transparent transition-all duration-300 placeholder-gray-500 resize-none"
+                                ></textarea>
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                class="w-full bg-gradient-to-r from-vet-orange to-vet-orange-light hover:from-vet-orange-light hover:to-vet-orange text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-vet-orange focus:ring-offset-2"
+                            >
+                                Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-vet-brown text-white py-8 relative overflow-hidden">
+        <!-- Botón flotante de WhatsApp -->
+        <a href="https://wa.me/569XXXXXXXX" target="_blank" aria-label="WhatsApp" class="fixed z-50 bottom-6 right-6 md:bottom-8 md:right-8 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center w-16 h-16 md:w-20 md:h-20 transition-all duration-300 group">
+            <i class="fab fa-whatsapp text-4xl md:text-5xl"></i>
+            <span class="absolute opacity-0 group-hover:opacity-100 bg-green-600 text-white text-xs rounded px-2 py-1 bottom-20 right-0 transition-all duration-300 pointer-events-none">¡Escríbenos!</span>
+        </a>
+        <!-- Formas orgánicas de fondo -->
+        <div class="absolute top-0 left-0 w-64 h-64 bg-vet-orange/10 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-2xl transform translate-x-1/3 translate-y-1/3"></div>
+        
+        <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
+            <p class="font-poppins opacity-90">
+                &copy; 2024 Veterinaria Tarapacá - Dra. Javiera Solis Larenas. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/social-feed.js"></script>
+    <script>
+    // Sidebar menú móvil compatible
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    const menuClose = document.getElementById('menu-close');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+    menuToggle && menuToggle.addEventListener('click', openSidebar);
+    menuClose && menuClose.addEventListener('click', closeSidebar);
+    overlay && overlay.addEventListener('click', closeSidebar);
+    // Cerrar con ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSidebar();
+    });
+    </script>
+</body>
+</html>
