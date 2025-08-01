@@ -65,3 +65,24 @@ body {
         font-size: 2.5rem !important;
     }
 }
+
+/* Mejoras para waves responsive */
+@media (max-width: 480px) {
+    /* Para pantallas muy pequeñas, reducir más la altura de las waves */
+    .wave-container {
+        height: 3rem !important;
+    }
+}
+
+@media (min-width: 1920px) {
+    /* Para pantallas 4K, incrementar altura de waves */
+    .wave-container {
+        height: 10rem !important;
+    }
+}
+
+/* Optimización de rendimiento para SVG waves */
+.wave-svg {
+    shape-rendering: geometricPrecision;
+    will-change: transform;
+}
