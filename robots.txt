@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://veterinaria-tarapaca.vercel.app/sitemap.xml
+
+# Crawl-delay for courtesy
+Crawl-delay: 1
+
+# Disallow admin or sensitive areas (none in this static site)
+# Disallow: /admin/
+
+# Allow all assets
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Allow: /assets/

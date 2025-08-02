@@ -86,3 +86,63 @@ body {
     shape-rendering: geometricPrecision;
     will-change: transform;
 }
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-fade-in-up,
+    .animate-pulse,
+    .animate-bounce {
+        animation: none;
+    }
+    
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* GPU acceleration for smooth animations */
+.animate-float,
+.animate-fade-in-up {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Optimize hover effects */
+.hover\:shadow-2xl {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover\:scale-105 {
+    transition: transform 0.3s ease;
+}
+
+/* Improve text rendering */
+body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Critical CSS for above-the-fold content */
+.hero-content {
+    contain: layout style paint;
+}
+
+/* Optimize images loading */
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}

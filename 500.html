@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Error del servidor - Clínica Veterinaria Tarapacá</title>
+    <meta name="description" content="Error temporal del servidor. Estamos trabajando para solucionarlo. Clínica Veterinaria Tarapacá.">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/dragonfly-icon.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vet-orange': '#ff9500',
+                        'vet-orange-light': '#ffb347',
+                        'vet-brown': '#8B4513',
+                        'vet-gray': '#f8f9fa'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <style>
+        @keyframes pulse-soft {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes float-slow {
+            0%, 100% { 
+                transform: translateY(0px);
+            }
+            50% { 
+                transform: translateY(-15px);
+            }
+        }
+        
+        .animate-pulse-soft {
+            animation: pulse-soft 3s ease-in-out infinite;
+        }
+        
+        .animate-float-slow {
+            animation: float-slow 4s ease-in-out infinite;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .refresh-btn:hover {
+            animation: spin 1s linear;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-red-50 via-orange-50 to-vet-gray min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Formas orgánicas de fondo -->
+    <div class="absolute top-1/4 right-0 w-80 h-80 bg-red-200/20 rounded-full blur-3xl animate-pulse-soft transform translate-x-1/3"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-vet-orange/10 rounded-full blur-2xl animate-float-slow transform -translate-x-1/4"></div>
+    <div class="absolute top-1/2 left-1/4 w-40 h-40 bg-red-300/15 rounded-full blur-xl animate-pulse-soft"></div>
+    
+    <!-- Contenido principal -->
+    <div class="relative z-10 text-center px-6 max-w-2xl mx-auto">
+        <!-- Icono de error -->
+        <div class="mb-8">
+            <div class="w-32 h-32 mx-auto bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-white text-6xl shadow-2xl animate-pulse-soft">
+                🏥
+            </div>
+        </div>
+        
+        <!-- Número de error -->
+        <h1 class="text-8xl md:text-9xl font-bold text-red-600 mb-4 font-poppins">
+            500
+        </h1>
+        
+        <!-- Mensaje principal -->
+        <h2 class="text-3xl md:text-4xl font-bold text-vet-brown mb-6 font-poppins">
+            Error del Servidor
+        </h2>
+        
+        <!-- Descripción -->
+        <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+            Nuestros servidores están experimentando dificultades técnicas. 🔧<br>
+            Estamos trabajando para solucionarlo lo antes posible.
+        </p>
+        
+        <!-- Estado del problema -->
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-8 rounded-r-lg">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700 font-medium">
+                        <strong>Problema temporal:</strong> Estamos trabajando en una solución.
+                    </p>
+                    <p class="text-xs text-yellow-600 mt-1" id="timestamp"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <button onclick="window.location.reload()" class="refresh-btn bg-gradient-to-r from-vet-orange to-vet-orange-light text-white font-semibold py-4 px-8 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-redo-alt"></i>
+                Reintentar
+            </button>
+            
+            <a href="/" class="bg-white text-vet-brown border-2 border-vet-brown font-semibold py-4 px-8 rounded-full hover:bg-vet-brown hover:text-white transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-home"></i>
+                Ir al Inicio
+            </a>
+        </div>
+        
+        <!-- Información alternativa -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-white/20">
+            <h3 class="text-xl font-bold text-vet-brown mb-6 font-poppins">
+                Mientras tanto, puedes contactarnos directamente
+            </h3>
+            
+            <div class="grid gap-4">
+                <!-- Contacto telefónico -->
+                <div class="flex items-center justify-center gap-4 p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-2xl border border-green-200">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-green-800 font-medium">Llámanos directamente</p>
+                        <a href="tel:+56953223402" class="text-green-700 font-bold text-lg hover:text-green-900 transition-colors">
+                            +56 9 5322 3402
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- WhatsApp -->
+                <div class="flex items-center justify-center gap-4 p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-2xl border border-green-200">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-green-800 font-medium">Escríbenos por WhatsApp</p>
+                        <a href="https://wa.me/56953223402" target="_blank" class="text-green-700 font-bold hover:text-green-900 transition-colors">
+                            Enviar mensaje
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Redes sociales -->
+                <div class="flex justify-center gap-4 mt-4">
+                    <a href="https://www.tiktok.com/@veterinaria.tarapaca" target="_blank" class="w-10 h-10 bg-vet-orange rounded-full flex items-center justify-center text-white hover:bg-vet-brown transition-colors">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://www.instagram.com/veterinariatarapaca" target="_blank" class="w-10 h-10 bg-vet-orange rounded-full flex items-center justify-center text-white hover:bg-vet-brown transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Horarios de atención -->
+        <div class="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-200">
+            <h4 class="text-vet-brown font-bold mb-3">
+                <i class="fas fa-clock text-vet-orange mr-2"></i>
+                Horarios de Atención
+            </h4>
+            <div class="text-sm text-gray-600 space-y-1">
+                <p><strong>Lunes a Viernes:</strong> 10:30 - 19:00 hrs</p>
+                <p><strong>Sábado:</strong> 10:30 - 14:00 hrs</p>
+                <p><strong>Domingo:</strong> Cerrado</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script para timestamp y auto-refresh -->
+    <script>
+        // Mostrar timestamp del error
+        document.getElementById('timestamp').textContent = 
+            'Detectado el: ' + new Date().toLocaleString('es-CL');
+        
+        // Auto-refresh cada 30 segundos (opcional)
+        let autoRefreshEnabled = false;
+        let refreshInterval;
+        
+        function toggleAutoRefresh() {
+            if (autoRefreshEnabled) {
+                clearInterval(refreshInterval);
+                autoRefreshEnabled = false;
+            } else {
+                refreshInterval = setInterval(() => {
+                    window.location.reload();
+                }, 30000); // 30 segundos
+                autoRefreshEnabled = true;
+            }
+        }
+        
+        // Tracking de error 500 (opcional)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'exception', {
+                description: '500 Server Error',
+                fatal: false,
+                send_to: 'GA_TRACKING_ID'
+            });
+        }
+        
+        // Detectar si es un problema persistente
+        let errorCount = localStorage.getItem('error_500_count') || 0;
+        errorCount++;
+        localStorage.setItem('error_500_count', errorCount);
+        
+        if (errorCount > 3) {
+            // Mostrar mensaje de problema persistente
+            const persistentErrorDiv = document.createElement('div');
+            persistentErrorDiv.className = 'mt-4 p-4 bg-red-100 border border-red-300 rounded-lg';
+            persistentErrorDiv.innerHTML = `
+                <p class="text-red-800 text-sm">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <strong>Problema persistente detectado.</strong> 
+                    Te recomendamos contactarnos directamente.
+                </p>
+            `;
+            document.querySelector('.bg-white\\/80').appendChild(persistentErrorDiv);
+        }
+        
+        // Limpiar contador si la página funciona correctamente después
+        window.addEventListener('beforeunload', () => {
+            if (window.location.pathname === '/') {
+                localStorage.removeItem('error_500_count');
+            }
+        });
+    </script>
+</body>
+</html>
