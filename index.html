@@ -42,6 +42,7 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"></noscript>
     <link rel="preload" href="images/logo.png" as="image">
+    <link rel="preload" href="images/perfil2.jpg" as="image">
     <link rel="preload" href="css/styles.css" as="style">
     
     <!-- Favicon -->
@@ -504,7 +505,7 @@
                                 <!-- Avatar mejorado -->
                                 <div class="relative mb-8">
                                     <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-2xl mx-auto transform hover:scale-105 transition-all duration-300 border-4 border-vet-orange bg-white flex items-center justify-center">
-                                        <img src="images/perfil2.jpg" alt="Dra. Javiera Solis Larenas" class="w-full h-full object-cover rounded-full" loading="lazy">
+                                        <img src="./images/perfil2.jpg" alt="Dra. Javiera Solis Larenas" class="w-full h-full object-cover rounded-full" loading="eager" onload="console.log('Imagen cargada exitosamente')" onerror="console.error('Error cargando imagen:', this.src); this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full bg-vet-orange rounded-full flex items-center justify-center text-white text-4xl font-bold\'>JS</div>'"">
                                     </div>
                                     <!-- Badge de especialidad -->
                                     <div class="absolute -bottom-2 -right-2 bg-vet-brown text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
