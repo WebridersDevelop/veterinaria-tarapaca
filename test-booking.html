@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Sistema de Reservas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-4">Test Sistema de Reservas</h1>
+        
+        <button onclick="testFunction()" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">
+            Test JavaScript
+        </button>
+        
+        <button onclick="nextStep(2)" class="bg-teal-600 text-white px-4 py-2 rounded mb-4">
+            Test nextStep(2)
+        </button>
+        
+        <div id="output" class="mt-4 p-4 bg-gray-100 rounded text-sm"></div>
+        
+        <!-- Paso 1 simulado -->
+        <div id="form-step-1" class="mt-6">
+            <h3>Paso 1 - Test</h3>
+            <input type="text" id="tutor-name" placeholder="Nombre" class="border p-2 w-full mb-2">
+            <input type="email" id="tutor-email" placeholder="Email" class="border p-2 w-full mb-2">
+            <input type="tel" id="tutor-phone" placeholder="Teléfono" class="border p-2 w-full mb-2">
+            <input type="text" id="pet-name" placeholder="Nombre mascota" class="border p-2 w-full mb-2">
+            <select id="pet-species" class="border p-2 w-full mb-2">
+                <option value="">Selecciona especie</option>
+                <option value="perro">Perro</option>
+                <option value="gato">Gato</option>
+            </select>
+            <input type="text" id="pet-age" placeholder="Edad" class="border p-2 w-full mb-4">
+            
+            <button onclick="nextStep(2)" class="bg-teal-600 text-white px-6 py-3 rounded">
+                Continuar a Paso 2
+            </button>
+        </div>
+        
+        <div id="form-step-2" class="hidden mt-6">
+            <h3>Paso 2 - Tipo Consulta</h3>
+            <button onclick="selectConsultationType('general')" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                Consulta General
+            </button>
+            <button onclick="selectConsultationType('endocrinologia')" class="bg-green-500 text-white px-4 py-2 rounded">
+                Endocrinología
+            </button>
+        </div>
+        
+        <div id="form-step-3" class="hidden mt-6">
+            <h3>Paso 3 - Horarios</h3>
+            <p>Calendario aparecería aquí</p>
+        </div>
+    </div>
+
+    <!-- Scripts en el mismo orden que tu sitio -->
+    <script src="js/apps-script-api.js"></script>
+    <script src="js/booking-simple.js"></script>
+    <script src="config/apps-script-config.js"></script>
+    
+    <script>
+        function testFunction() {
+            const output = document.getElementById('output');
+            let results = [];
+            
+            // Test 1: Verificar que las funciones existen
+            results.push('typeof nextStep: ' + typeof window.nextStep);
+            results.push('typeof selectConsultationType: ' + typeof window.selectConsultationType);
+            results.push('typeof bookingSystem: ' + typeof window.bookingSystem);
+            
+            // Test 2: Verificar que la API está configurada
+            if (window.bookingSystem) {
+                results.push('appsScriptAPI exists: ' + !!window.bookingSystem.appsScriptAPI);
+                results.push('API configured: ' + window.bookingSystem.appsScriptAPI.isReady());
+            }
+            
+            // Test 3: Verificar configuración
+            results.push('APPS_SCRIPT_CONFIG: ' + typeof window.APPS_SCRIPT_CONFIG);
+            if (window.APPS_SCRIPT_CONFIG) {
+                results.push('Config URL: ' + window.APPS_SCRIPT_CONFIG.scriptUrl.substring(0, 50) + '...');
+            }
+            
+            output.innerHTML = results.join('<br>');
+        }
+        
+        // Auto-ejecutar test al cargar
+        setTimeout(testFunction, 1000);
+    </script>
+</body>
+</html>
