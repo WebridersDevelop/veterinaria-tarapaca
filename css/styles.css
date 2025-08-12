@@ -158,6 +158,20 @@ body {
     contain: layout style paint;
 }
 
+/* Hero background image optimization */
+#inicio img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    object-fit: cover;
+    object-position: center;
+    will-change: opacity;
+}
+
+/* Ensure smooth fade transition on load */
+#inicio img.loaded {
+    transition: opacity 0.5s ease-in-out;
+}
+
 /* Optimize images loading */
 img {
     height: auto;

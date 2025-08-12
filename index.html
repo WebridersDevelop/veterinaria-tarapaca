@@ -290,12 +290,18 @@
 
     <main>
         <section id="inicio" class="relative min-h-[120vh] bg-gradient-to-br from-vet-orange via-vet-orange-light to-vet-orange flex items-center justify-center text-center text-white pt-32 md:pt-36 pb-12 md:pb-16 overflow-hidden">
+            <!-- Background Image with Gradient Overlay -->
+            <div class="absolute inset-0 z-0">
+                <img src="./images/frontis.jpg" alt="Veterinaria Tarapacá - Frontis" class="w-full h-full object-cover object-center opacity-60">
+                <!-- Gradient Overlay to blend with existing colors -->
+                <div class="absolute inset-0 bg-gradient-to-br from-vet-orange/60 via-vet-orange-light/50 to-vet-orange/65"></div>
+            </div>
             <!-- Formas orgánicas de fondo -->
-            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3 animate-pulse"></div>
-            <div class="absolute bottom-0 left-0 w-80 h-80 bg-vet-brown/20 rounded-full blur-2xl transform -translate-x-1/4 translate-y-1/4 animate-bounce"></div>
-            <div class="absolute top-1/3 left-1/4 w-32 h-32 bg-white/5 rounded-full animate-float"></div>
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3 animate-pulse z-10"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-vet-brown/20 rounded-full blur-2xl transform -translate-x-1/4 translate-y-1/4 animate-bounce z-10"></div>
+            <div class="absolute top-1/3 left-1/4 w-32 h-32 bg-white/5 rounded-full animate-float z-10"></div>
             
-            <div class="relative z-10 max-w-6xl mx-auto px-4 md:px-6">
+            <div class="relative z-20 max-w-6xl mx-auto px-4 md:px-6">
                 <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                     <!-- Contenido de texto -->
                     <div class="text-center lg:text-left order-2 lg:order-1">
@@ -348,7 +354,7 @@
             </div>
             
             <!-- Forma orgánica inferior -->
-            <div class="absolute bottom-0 left-0 w-full h-16 sm:h-20 md:h-28 lg:h-32 xl:h-36 overflow-hidden">
+            <div class="absolute bottom-0 left-0 w-full h-16 sm:h-20 md:h-28 lg:h-32 xl:h-36 overflow-hidden z-15">
                 <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full wave-svg">
                     <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0V0Z" fill="#fefce8"/>
                 </svg>
