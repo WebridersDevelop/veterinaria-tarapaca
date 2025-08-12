@@ -22,24 +22,26 @@ class AppsScriptAPI {
      */
     async checkAvailability(date, consultationType) {
         if (!this.isConfigured) {
-            throw new Error('Apps Script API no configurada. Llama a configure() primero.');
+            console.warn('Apps Script API no configurada. Usando horarios estáticos.');
+            return this.getFallbackSlots(date, consultationType);
         }
         
         try {
-            const requestData = {
+            console.log('Verificando disponibilidad:', { date, consultationType });
+            
+            // Usar GET con parámetros para evitar CORS
+            const params = new URLSearchParams({
                 action: 'checkAvailability',
                 date: date,
                 consultationType: consultationType
-            };
+            });
             
-            console.log('Verificando disponibilidad:', requestData);
+            const url = `${this.scriptUrl}?${params.toString()}`;
+            console.log('URL de request:', url);
             
-            const response = await fetch(this.scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
             });
             
             if (!response.ok) {
@@ -47,12 +49,13 @@ class AppsScriptAPI {
             }
             
             const result = await response.json();
+            console.log('Respuesta del servidor:', result);
             
             if (!result.success) {
                 throw new Error(result.error || 'Error desconocido al verificar disponibilidad');
             }
             
-            console.log('Disponibilidad obtenida:', result);
+            console.log('✅ Disponibilidad obtenida:', result.availableSlots);
             return result.availableSlots;
             
         } catch (error) {
@@ -72,19 +75,21 @@ class AppsScriptAPI {
         }
         
         try {
-            const requestData = {
+            console.log('Creando cita:', appointmentData);
+            
+            // Usar GET con parámetros codificados para evitar CORS
+            const params = new URLSearchParams({
                 action: 'createAppointment',
-                appointmentData: appointmentData
-            };
+                // Codificar datos de la cita como JSON string
+                appointmentData: JSON.stringify(appointmentData)
+            });
             
-            console.log('Creando cita:', requestData);
+            const url = `${this.scriptUrl}?${params.toString()}`;
+            console.log('URL de creación:', url);
             
-            const response = await fetch(this.scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
             });
             
             if (!response.ok) {
@@ -92,12 +97,13 @@ class AppsScriptAPI {
             }
             
             const result = await response.json();
+            console.log('Respuesta del servidor:', result);
             
             if (!result.success) {
                 throw new Error(result.error || 'Error desconocido al crear la cita');
             }
             
-            console.log('Cita creada exitosamente:', result);
+            console.log('✅ Cita creada exitosamente:', result);
             return result;
             
         } catch (error) {
