@@ -1,5 +1,5 @@
-// Google Apps Script para Veterinaria Tarapacá - VERSIÓN CORREGIDA
-// Compatible con CORS y localhost
+// Google Apps Script para Veterinaria Tarapacá - VERSIÓN FINAL FUNCIONAL
+// Compatible con GET requests desde cualquier dominio - SIN CORS
 
 const CALENDAR_ID = 'veterinariatarapaca@gmail.com';
 const TIMEZONE = 'America/Santiago';
@@ -15,221 +15,336 @@ const CLINIC_HOURS = {
   'SUNDAY': null
 };
 
-// Configuración de consultas
+// Configuración de consultas - EXACTAMENTE ASÍ
 const CONSULTATION_TYPES = {
   'endocrinologia': { duration: 60, name: 'Consulta Endocrinología' },
   'general': { duration: 30, name: 'Consulta General' }
 };
 
 /**
- * Manejar todas las requests HTTP
+ * Manejar requests GET únicamente (evita CORS)
  */
-function doPost(e) {
-  return handleRequest(e);
-}
-
 function doGet(e) {
-  return handleRequest(e);
-}
-function handleRequest(e) {
-  // Headers CORS mejorados
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400'
-  };
-  
   try {
-    Logger.log('📨 Request recibido');
-    
-    let requestData = {};
-    
-    // Obtener datos del request
-    if (e && e.postData && e.postData.contents) {
-      // POST con JSON
-      requestData = JSON.parse(e.postData.contents);
-      Logger.log('Datos POST:', requestData);
-    } else if (e && e.parameter && Object.keys(e.parameter).length > 0) {
-      // GET con parámetros
-      requestData = e.parameter;
-      Logger.log('Datos GET:', requestData);
-    } else {
-      // Sin acción específica - retornar status
-      return createResponse({
+    Logger.log('📨 GET Request recibido');
+    Logger.log('Parámetros recibidos:', e.parameter);
+
+    // Verificar que e y e.parameter existen
+    if (!e || !e.parameter) {
+      Logger.log('❌ No hay parámetros en el request');
+      return createJSONResponse({
         success: true,
         message: '✅ API de Veterinaria Tarapacá funcionando',
         timestamp: new Date().toISOString(),
-        calendar: CALENDAR_ID
-      }, headers);
+        calendar: CALENDAR_ID,
+        usage: 'Usa ?action=checkAvailability&date=2025-01-15&consultationType=general'
+      });
     }
-    
-    const action = requestData.action;
+
+    const action = e.parameter.action;
+
+    if (!action) {
+      // Sin acción - retornar status
+      return createJSONResponse({
+        success: true,
+        message: '✅ API de Veterinaria Tarapacá funcionando',
+        timestamp: new Date().toISOString(),
+        calendar: CALENDAR_ID,
+        availableActions: ['checkAvailability', 'createAppointment']
+      });
+    }
+
+    Logger.log('🎯 Acción solicitada:', action);
+
     let response;
-    
+
     switch (action) {
       case 'checkAvailability':
-        response = checkAvailability(requestData.date, requestData.consultationType);
+        Logger.log('Verificando disponibilidad...');
+        response = checkAvailability(e.parameter.date, e.parameter.consultationType);
         break;
-        
+
       case 'createAppointment':
-        response = createAppointment(requestData.appointmentData);
+        Logger.log('Creando cita...');
+        // Parsear datos de cita desde parámetro JSON
+        let appointmentData;
+        try {
+          if (!e.parameter.appointmentData) {
+            throw new Error('No se recibieron datos de la cita');
+          }
+          // DECODIFICAR URL antes de parsear JSON - LÍNEA CORREGIDA
+          appointmentData = JSON.parse(decodeURIComponent(e.parameter.appointmentData));
+          Logger.log('📅 Datos de cita parseados:', appointmentData);
+        } catch (parseError) {
+          Logger.log('❌ Error parseando appointmentData:', parseError);
+          response = {
+            success: false,
+            error: 'Error parseando datos de la cita: ' + parseError.toString()
+          };
+          break;
+        }
+        response = createAppointment(appointmentData);
         break;
-        
+
       default:
+        Logger.log('❌ Acción no válida:', action);
         response = {
-          success: true,
-          message: 'API funcionando - sin acción específica',
+          success: false,
+          error: 'Acción no válida: ' + action,
           availableActions: ['checkAvailability', 'createAppointment']
         };
     }
-    
-    return createResponse(response, headers);
-    
+
+    Logger.log('📤 Enviando respuesta:', response);
+    return createJSONResponse(response);
+
   } catch (error) {
-    Logger.log('❌ Error:', error.toString());
-    return createResponse({
+    Logger.log('❌ Error general en doGet:', error.toString());
+    return createJSONResponse({
       success: false,
-      error: error.toString()
-    }, headers);
+      error: 'Error interno del servidor: ' + error.toString()
+    });
   }
 }
 
 /**
- * Crear respuesta con headers CORS
+ * Crear respuesta JSON simple
  */
-function createResponse(data, headers) {
-  const output = ContentService.createTextOutput(JSON.stringify(data))
+function createJSONResponse(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
-  
-  // Agregar headers CORS
-  Object.keys(headers).forEach(key => {
-    output.setHeader(key, headers[key]);
-  });
-  
-  return output;
 }
 
+/**
+ * Verificar disponibilidad de horarios
+ */
 function checkAvailability(dateString, consultationType) {
   try {
-    Logger.log(`🔍 Verificando disponibilidad: ${dateString}, ${consultationType}`);
-    
+    Logger.log(`🔍 Verificando disponibilidad: fecha="${dateString}", tipo="${consultationType}"`);
+
+    // Validar parámetros requeridos
+    if (!dateString || !consultationType) {
+      Logger.log('❌ Faltan parámetros requeridos');
+      return {
+        success: false,
+        error: 'Faltan parámetros: date y consultationType son requeridos'
+      };
+    }
+
+    // Validar tipo de consulta
+    if (!CONSULTATION_TYPES[consultationType]) {
+      Logger.log('❌ Tipo de consulta no válido:', consultationType);
+      return {
+        success: false,
+        error: 'Tipo de consulta no válido: ' + consultationType + '. Tipos disponibles: ' +
+Object.keys(CONSULTATION_TYPES).join(', ')
+      };
+    }
+
+    // Acceso al calendario
     const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
     const date = new Date(dateString);
     const dayName = Utilities.formatDate(date, TIMEZONE, 'EEEE').toUpperCase();
-    
+
+    Logger.log('📅 Día de la semana:', dayName);
+
     // Verificar si la clínica está abierta
     const daySchedule = CLINIC_HOURS[dayName];
     if (!daySchedule) {
+      Logger.log('🚫 Clínica cerrada el domingo');
       return {
         success: true,
         availableSlots: [],
+        date: dateString,
+        consultationType: consultationType,
         message: 'Clínica cerrada los domingos'
       };
     }
-    
-    // Generar slots básicos (mejorable con eventos reales)
-    const duration = CONSULTATION_TYPES[consultationType].duration;
+
+    // Generar slots de tiempo
+    const consultation = CONSULTATION_TYPES[consultationType];
+    const duration = consultation.duration;
     const slots = generateTimeSlots(daySchedule.start, daySchedule.end, duration);
-    
-    Logger.log(`✅ Slots generados: ${slots.length}`);
-    
+
+    Logger.log(`✅ Slots generados: ${slots.length} horarios`);
+    Logger.log('Horarios:', slots);
+
     return {
       success: true,
       availableSlots: slots,
       date: dateString,
-      consultationType: consultationType
+      consultationType: consultationType,
+      message: `${slots.length} horarios disponibles para ${consultation.name}`
     };
-    
+
   } catch (error) {
-    Logger.log(`❌ Error en checkAvailability: ${error}`);
+    Logger.log(`❌ Error en checkAvailability: ${error.toString()}`);
     return {
       success: false,
-      error: error.toString()
+      error: 'Error verificando disponibilidad: ' + error.toString()
     };
   }
 }
 
 /**
- * Crear nueva cita
+ * Crear nueva cita en Google Calendar
  */
 function createAppointment(appointmentData) {
   try {
-    Logger.log('📅 Creando cita:', JSON.stringify(appointmentData));
-    
-    const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+    Logger.log('📅 Creando cita con datos:', JSON.stringify(appointmentData));
+
+    // Validar datos básicos
+    if (!appointmentData) {
+      Logger.log('❌ No se recibieron datos de la cita');
+      return {
+        success: false,
+        error: 'No se recibieron datos de la cita'
+      };
+    }
+
+    if (!appointmentData.type || !appointmentData.date || !appointmentData.time) {
+      Logger.log('❌ Datos de cita incompletos');
+      return {
+        success: false,
+        error: 'Datos de cita incompletos. Se requieren: type, date, time'
+      };
+    }
+
+    // Validar tipo de consulta
     const consultation = CONSULTATION_TYPES[appointmentData.type];
-    
-    // Crear fechas
+    if (!consultation) {
+      Logger.log('❌ Tipo de consulta no válido:', appointmentData.type);
+      return {
+        success: false,
+        error: 'Tipo de consulta no válido: ' + appointmentData.type + '. Tipos disponibles: ' +
+Object.keys(CONSULTATION_TYPES).join(', ')
+      };
+    }
+
+    Logger.log('✅ Tipo de consulta válido:', consultation);
+
+    // Acceso al calendario
+    const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+
+    // Crear fechas y horas
     const startDateTime = new Date(appointmentData.date + 'T' + appointmentData.time + ':00');
     const endDateTime = new Date(startDateTime.getTime() + (consultation.duration * 60000));
-    
-    // Crear evento
-    const title = `${consultation.name} - ${appointmentData.pet.name}`;
+
+    Logger.log('🕐 Fecha inicio:', startDateTime.toISOString());
+    Logger.log('🕐 Fecha fin:', endDateTime.toISOString());
+
+    // Crear título del evento
+    const petName = appointmentData.pet?.name || 'Mascota sin nombre';
+    const title = `${consultation.name} - ${petName}`;
+
+    // Crear descripción detallada
+    const tutorName = appointmentData.tutor?.name || 'No especificado';
+    const tutorPhone = appointmentData.tutor?.phone || 'No especificado';
+    const tutorEmail = appointmentData.tutor?.email || 'No especificado';
+    const petSpecies = appointmentData.pet?.species || 'No especificado';
+    const petAge = appointmentData.pet?.age || 'No especificado';
+
     const description = `
-CITA VETERINARIA:
-• Tutor: ${appointmentData.tutor.name}
-• Teléfono: ${appointmentData.tutor.phone}
-• Email: ${appointmentData.tutor.email}
-• Mascota: ${appointmentData.pet.name}
-• Especie: ${appointmentData.pet.species}
-• Edad: ${appointmentData.pet.age}
+🐾 CITA VETERINARIA - SISTEMA WEB
+
+📋 INFORMACIÓN DE LA CITA:
 • Tipo: ${consultation.name}
 • Duración: ${consultation.duration} minutos
+• Fecha: ${startDateTime.toLocaleDateString('es-CL')}
+• Hora: ${appointmentData.time}
 
-Generado por sistema web - ${new Date().toLocaleString('es-CL')}
+👤 DATOS DEL TUTOR:
+• Nombre: ${tutorName}
+• Teléfono: ${tutorPhone}
+• Email: ${tutorEmail}
+
+🐕 DATOS DE LA MASCOTA:
+• Nombre: ${petName}
+• Especie: ${petSpecies}
+• Edad: ${petAge}
+
+⏰ SOLICITUD GENERADA:
+${new Date().toLocaleString('es-CL', { timeZone: TIMEZONE })}
+
+🌐 Generado automáticamente por el sistema de reservas
+Veterinaria Tarapacá - Iquique, Chile
     `.trim();
-    
+
+    // Crear evento en el calendario
+    Logger.log('🗓️ Creando evento en calendario...');
     const event = calendar.createEvent(title, startDateTime, endDateTime, {
       description: description,
       location: 'Clínica Veterinaria Tarapacá, Av. Salvador Allende #3638, Iquique'
     });
-    
-    Logger.log('✅ Evento creado:', event.getId());
-    
+
+    const eventId = event.getId();
+    Logger.log('✅ Evento creado exitosamente con ID:', eventId);
+
     return {
       success: true,
-      eventId: event.getId(),
-      message: 'Cita creada exitosamente',
+      eventId: eventId,
+      message: 'Cita agendada exitosamente en Google Calendar',
       appointment: {
         title: title,
         startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString()
+        endTime: endDateTime.toISOString(),
+        duration: consultation.duration,
+        calendarId: CALENDAR_ID,
+        location: 'Clínica Veterinaria Tarapacá, Av. Salvador Allende #3638, Iquique'
+      },
+      patientInfo: {
+        tutor: tutorName,
+        pet: petName,
+        type: consultation.name
       }
     };
-    
+
   } catch (error) {
-    Logger.log(`❌ Error creando cita: ${error}`);
+    Logger.log(`❌ Error creando cita: ${error.toString()}`);
     return {
       success: false,
-      error: error.toString()
+      error: 'Error creando cita en calendario: ' + error.toString()
     };
   }
 }
 
 /**
- * Generar slots de tiempo
+ * Generar slots de tiempo disponibles
  */
 function generateTimeSlots(startTime, endTime, duration) {
-  const slots = [];
-  const start = parseTime(startTime);
-  const end = parseTime(endTime);
-  
-  let current = start;
-  
-  while (current < end) {
-    const timeString = Utilities.formatDate(current, TIMEZONE, 'HH:mm');
-    slots.push(timeString);
-    
-    // Avanzar por la duración
-    current = new Date(current.getTime() + (duration * 60000));
+  try {
+    Logger.log(`⏰ Generando slots: ${startTime} - ${endTime}, duración: ${duration}min`);
+
+    const slots = [];
+    const start = parseTime(startTime);
+    const end = parseTime(endTime);
+
+    let current = new Date(start);
+
+    while (current < end) {
+      // Verificar que el slot + duración no exceda el horario de cierre
+      const slotEnd = new Date(current.getTime() + (duration * 60000));
+      if (slotEnd <= end) {
+        const timeString = Utilities.formatDate(current, TIMEZONE, 'HH:mm');
+        slots.push(timeString);
+      }
+
+      // Avanzar al siguiente slot (mismo intervalo que la duración)
+      current = new Date(current.getTime() + (duration * 60000));
+    }
+
+    Logger.log(`✅ Generados ${slots.length} slots:`, slots);
+    return slots;
+
+  } catch (error) {
+    Logger.log('❌ Error generando slots:', error.toString());
+    return [];
   }
-  
-  return slots;
 }
 
 /**
- * Parsear tiempo
+ * Parsear string de tiempo a objeto Date
  */
 function parseTime(timeString) {
   const [hours, minutes] = timeString.split(':').map(Number);
@@ -239,11 +354,65 @@ function parseTime(timeString) {
 }
 
 /**
- * Test básico
+ * FUNCIONES DE TESTING - Ejecutar para probar
  */
+
 function testBasico() {
-  Logger.log('🧪 Test iniciado');
-  const result = checkAvailability('2024-01-20', 'general');
-  Logger.log('Resultado:', result);
-  return result;
+  Logger.log('🧪 === TEST BÁSICO INICIADO ===');
+
+  // Test 1: Configuración
+  Logger.log('📋 Configuración:');
+  Logger.log('Calendar ID:', CALENDAR_ID);
+  Logger.log('Consultation Types:', CONSULTATION_TYPES);
+
+  // Test 2: Verificar disponibilidad
+  Logger.log('📅 Test checkAvailability...');
+  const availability = checkAvailability('2025-01-20', 'general');
+  Logger.log('Resultado disponibilidad:', availability);
+
+  // Test 3: Acceso al calendario
+  try {
+    const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+    Logger.log('✅ Acceso al calendario exitoso:', calendar.getName());
+  } catch (calError) {
+    Logger.log('❌ Error accediendo al calendario:', calError.toString());
+  }
+
+  Logger.log('🧪 === TEST BÁSICO COMPLETADO ===');
+  return availability;
+}
+
+function debugCreateAppointment() {
+  Logger.log('=== DEBUG CREATE APPOINTMENT ===');
+
+  // Test 1: Verificar CONSULTATION_TYPES
+  Logger.log('CONSULTATION_TYPES:', CONSULTATION_TYPES);
+  Logger.log('Claves disponibles:', Object.keys(CONSULTATION_TYPES));
+  Logger.log('Tipo general existe?', CONSULTATION_TYPES.hasOwnProperty('general'));
+  Logger.log('Contenido de general:', CONSULTATION_TYPES['general']);
+
+  // Test 2: Simular creación de cita
+  const testAppointmentData = {
+    type: 'general',
+    date: '2025-01-15',
+    time: '10:30',
+    tutor: {
+      name: 'Test',
+      phone: '123',
+      email: 'test@test.com'
+    },
+    pet: {
+      name: 'Test',
+      species: 'perro',
+      age: '3'
+    }
+  };
+
+  Logger.log('Datos de prueba:', testAppointmentData);
+
+  // Test 3: Intentar crear cita
+  const resultado = createAppointment(testAppointmentData);
+  Logger.log('Resultado:', resultado);
+
+  return resultado;
 }

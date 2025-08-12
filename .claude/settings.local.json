@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(copy:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
