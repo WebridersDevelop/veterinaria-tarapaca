@@ -3,7 +3,9 @@
     "allow": [
       "Bash(copy:*)",
       "Bash(cp:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:script.google.com)",
+      "WebFetch(domain:script.googleusercontent.com)"
     ],
     "deny": []
   }
