@@ -149,29 +149,45 @@ img[loading="lazy"].loaded {
 
 /* Booking System Styles */
 .step-circle {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    font-size: 14px;
     transition: all 0.3s ease;
-    border: 3px solid #e5e7eb;
+    border: 2px solid #e5e7eb;
     background-color: white;
     color: #9ca3af;
 }
 
+@media (min-width: 640px) {
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        border: 3px solid #e5e7eb;
+    }
+}
+
 .step-circle.active {
-    background-color: #0d9488;
-    border-color: #0d9488;
+    background-color: #ff9500;
+    border-color: #ff9500;
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.05);
+}
+
+@media (min-width: 640px) {
+    .step-circle.active {
+        transform: scale(1.1);
+    }
 }
 
 .step-circle.completed {
-    background-color: #10b981;
-    border-color: #10b981;
+    background-color: #8B4513;
+    border-color: #8B4513;
     color: white;
 }
 

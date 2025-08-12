@@ -45,6 +45,9 @@ class SimpleBookingSystem {
         if (form) {
             form.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
+        
+        // Inicializar botones de navegación
+        this.updateNavigationButtons(1);
     }
     
     selectConsultationType(type) {
@@ -53,13 +56,13 @@ class SimpleBookingSystem {
         
         // Actualizar selección visual
         document.querySelectorAll('.consultation-card').forEach(card => {
-            card.classList.remove('border-teal-500', 'bg-teal-50');
+            card.classList.remove('border-vet-orange', 'bg-orange-50');
             card.classList.add('border-gray-200');
         });
         
         const selectedCard = document.querySelector(`[onclick*="${type}"]`);
         if (selectedCard) {
-            selectedCard.classList.add('border-teal-500', 'bg-teal-50');
+            selectedCard.classList.add('border-vet-orange', 'bg-orange-50');
             selectedCard.classList.remove('border-gray-200');
         }
         
@@ -94,9 +97,12 @@ class SimpleBookingSystem {
         // Actualizar indicador de progreso
         this.updateProgressBar(step);
         
+        // Actualizar botones de navegación
+        this.updateNavigationButtons(step);
+        
         // Scroll suave
         setTimeout(() => {
-            const bookingSection = document.getElementById('agenda-cita');
+            const bookingSection = document.getElementById('agenda');
             if (bookingSection) {
                 bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -117,6 +123,80 @@ class SimpleBookingSystem {
         
         // Actualizar indicador de progreso
         this.updateProgressBar(step);
+        
+        // Actualizar botones de navegación
+        this.updateNavigationButtons(step);
+        
+        // Ocultar resumen si volvemos a editar datos
+        if (step === 1) {
+            document.getElementById('appointment-summary').classList.add('hidden');
+        }
+        
+        // Scroll suave
+        setTimeout(() => {
+            const bookingSection = document.getElementById('agenda');
+            if (bookingSection) {
+                bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+    
+    goBackStep() {
+        // Determinar el paso actual y retroceder
+        if (!document.getElementById('form-step-1').classList.contains('hidden')) {
+            // Estamos en paso 1, no se puede retroceder más
+            return;
+        } else if (!document.getElementById('form-step-2').classList.contains('hidden')) {
+            // Estamos en paso 2, volver al paso 1
+            this.prevStep(1);
+            this.updateNavigationButtons(1);
+        } else if (!document.getElementById('form-step-3').classList.contains('hidden')) {
+            // Estamos en paso 3, volver al paso 2
+            this.prevStep(2);
+            this.updateNavigationButtons(2);
+        }
+    }
+    
+    goNextStep() {
+        // Determinar el paso actual y avanzar
+        if (!document.getElementById('form-step-1').classList.contains('hidden')) {
+            // Estamos en paso 1, validar y avanzar al paso 2
+            if (this.validateStep1()) {
+                this.nextStep(2);
+            }
+        } else if (!document.getElementById('form-step-2').classList.contains('hidden')) {
+            // Estamos en paso 2, pero necesitamos seleccionar tipo de consulta
+            // El avance se maneja automáticamente en selectConsultationType()
+            return;
+        } else if (!document.getElementById('form-step-3').classList.contains('hidden')) {
+            // Estamos en paso 3, no hay paso siguiente (se maneja con submit)
+            return;
+        }
+    }
+    
+    updateNavigationButtons(step) {
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const submitButton = document.getElementById('submit-button');
+        
+        // Configurar botones según el paso
+        if (step === 1) {
+            prevButton.classList.add('hidden');
+            nextButton.classList.remove('hidden');
+            submitButton.classList.add('hidden');
+            nextButton.textContent = 'CONTINUAR';
+            nextButton.classList.remove('cursor-not-allowed', 'bg-gray-400');
+            nextButton.classList.add('bg-vet-orange', 'hover:bg-vet-brown');
+        } else if (step === 2) {
+            prevButton.classList.remove('hidden');
+            nextButton.classList.add('hidden');
+            submitButton.classList.add('hidden');
+        } else if (step === 3) {
+            prevButton.classList.remove('hidden');
+            nextButton.classList.add('hidden');
+            // submitButton visibility se maneja cuando se selecciona hora
+            submitButton.classList.add('hidden');
+        }
     }
     
     validateStep1() {
@@ -264,13 +344,26 @@ class SimpleBookingSystem {
     }
     
     isDateAvailable(date) {
-        const dayName = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'][date.getDay()];
+        // Crear fecha correctamente para evitar problemas de timezone
+        let actualDate;
+        if (typeof date === 'string') {
+            // Si es string "YYYY-MM-DD", parsearlo correctamente
+            const [year, month, day] = date.split('-').map(Number);
+            actualDate = new Date(year, month - 1, day);
+        } else {
+            actualDate = date;
+        }
+        
+        const dayName = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'][actualDate.getDay()];
         return this.horarios[dayName] !== null;
     }
     
     async selectDate(dateString) {
         this.selectedDate = dateString;
-        const date = new Date(dateString);
+        
+        // Crear fecha correctamente para evitar problemas de timezone
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         
         console.log(`Fecha seleccionada: ${dateString}`);
         
@@ -314,7 +407,7 @@ class SimpleBookingSystem {
         if (container) {
             container.innerHTML = `
                 <div class="col-span-4 text-center py-8 text-gray-500">
-                    <div class="animate-spin w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <div class="animate-spin w-8 h-8 border-4 border-vet-orange border-t-transparent rounded-full mx-auto mb-4"></div>
                     <p>Verificando disponibilidad...</p>
                 </div>
             `;
@@ -342,7 +435,7 @@ class SimpleBookingSystem {
         slots.forEach(time => {
             slotsHTML += `
                 <button onclick="bookingSystem.selectTime('${time}')" 
-                        class="time-slot p-3 text-center border-2 border-gray-200 rounded-xl hover:border-teal-500 hover:bg-teal-50 transition-all duration-200 text-gray-700 font-medium">
+                        class="time-slot p-3 text-center border-2 border-gray-200 rounded-xl hover:border-vet-orange hover:bg-orange-50 transition-all duration-200 text-gray-700 font-medium">
                     ${time}
                 </button>
             `;
@@ -378,7 +471,12 @@ class SimpleBookingSystem {
     
     updateConsultationInfo() {
         const config = this.config[this.selectedType];
-        const date = new Date(this.selectedDate);
+        
+        // Corregir el parsing de fecha para evitar problemas de timezone
+        const dateString = this.selectedDate; // formato: "YYYY-MM-DD"
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day); // month es 0-indexed
+        
         const formattedDate = date.toLocaleDateString('es-CL', {
             weekday: 'long',
             day: 'numeric',
@@ -419,8 +517,8 @@ class SimpleBookingSystem {
                 slots.push(timeString);
             }
             
-            // Avanzar por la duración de la cita
-            currentTime.setMinutes(currentTime.getMinutes() + duration);
+            // Avanzar en intervalos de 30 minutos para mayor flexibilidad
+            currentTime.setMinutes(currentTime.getMinutes() + 30);
         }
         
         return slots;
@@ -447,14 +545,14 @@ class SimpleBookingSystem {
         
         // Actualizar visual de horarios
         document.querySelectorAll('.time-slot').forEach(slot => {
-            slot.classList.remove('border-teal-500', 'bg-teal-500', 'text-white');
+            slot.classList.remove('border-vet-orange', 'bg-vet-orange', 'text-white');
             slot.classList.add('border-gray-200', 'text-gray-700');
         });
         
         // Marcar selección actual
         const selectedSlot = document.querySelector(`button[onclick*="${time}"]`);
         if (selectedSlot) {
-            selectedSlot.classList.add('border-teal-500', 'bg-teal-500', 'text-white');
+            selectedSlot.classList.add('border-vet-orange', 'bg-vet-orange', 'text-white');
             selectedSlot.classList.remove('border-gray-200', 'text-gray-700');
         }
         
@@ -654,21 +752,33 @@ class SimpleBookingSystem {
     }
     
     showSuccessMessage(appointmentData) {
-        // Reemplazar todo el contenido con mensaje de éxito
-        const mainContainer = document.querySelector('.max-w-4xl.mx-auto');
-        if (mainContainer) {
+        // Mantener el foco en la sección de citas y mostrar mensaje de éxito
+        const agendaSection = document.getElementById('agenda');
+        const mainContainer = document.querySelector('#agenda .bg-white');
+        
+        console.log('🔍 Elementos encontrados:', {
+            agendaSection: !!agendaSection,
+            mainContainer: !!mainContainer,
+            selector: '#agenda .bg-white'
+        });
+        
+        if (mainContainer && agendaSection) {
+            // Scroll a la sección de agenda
+            agendaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Reemplazar contenido con mensaje de éxito
             mainContainer.innerHTML = `
                 <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 text-center">
-                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div class="w-16 h-16 bg-vet-orange rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-teal-600 mb-4">🎉 ¡Cita Agendada Exitosamente!</h3>
+                    <h3 class="text-2xl font-bold text-vet-orange mb-4">🎉 ¡Cita Agendada Exitosamente!</h3>
                     <p class="text-gray-600 mb-6">Tu cita ha sido confirmada y agregada al calendario de la veterinaria.</p>
                     
-                    <div class="bg-teal-50 rounded-xl p-6 mb-6 text-left">
-                        <h4 class="font-bold text-teal-800 mb-4 text-center">📅 Detalles de tu Cita</h4>
+                    <div class="bg-orange-50 rounded-xl p-6 mb-6 text-left">
+                        <h4 class="font-bold text-vet-brown mb-4 text-center">📅 Detalles de tu Cita</h4>
                         <div class="grid md:grid-cols-2 gap-4 text-sm">
                             <div class="space-y-2">
                                 <p><strong>Tutor:</strong> ${appointmentData.tutor.name}</p>
@@ -676,9 +786,9 @@ class SimpleBookingSystem {
                                 <p><strong>Especie:</strong> ${appointmentData.pet.species}</p>
                             </div>
                             <div class="space-y-2">
-                                <p><strong>Tipo:</strong> ${this.config[this.selectedType].nombre}</p>
-                                <p><strong>Fecha:</strong> ${new Date(this.selectedDate).toLocaleDateString('es-CL')}</p>
-                                <p><strong>Hora:</strong> ${this.selectedTime}</p>
+                                <p><strong>Tipo:</strong> ${this.config[appointmentData.type].nombre}</p>
+                                <p><strong>Fecha:</strong> ${new Date(appointmentData.date).toLocaleDateString('es-CL')}</p>
+                                <p><strong>Hora:</strong> ${appointmentData.time}</p>
                             </div>
                         </div>
                     </div>
@@ -693,15 +803,22 @@ class SimpleBookingSystem {
                     </div>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="location.reload()" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300">
+                        <button onclick="location.reload()" class="bg-vet-orange hover:bg-vet-brown text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300">
                             Agendar Otra Cita
                         </button>
-                        <a href="tel:+56912345678" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300">
+                        <a href="tel:+56912345678" class="bg-vet-brown hover:bg-vet-orange text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300">
                             📞 Llamar a la Clínica
                         </a>
                     </div>
                 </div>
             `;
+        } else {
+            console.error('❌ No se encontraron los elementos necesarios para mostrar el mensaje de éxito');
+            console.error('agendaSection:', agendaSection);
+            console.error('mainContainer:', mainContainer);
+            
+            // Fallback: mostrar alerta simple
+            alert('✅ ¡Cita agendada exitosamente!\nRevisaremos tu solicitud y te contactaremos pronto.');
         }
     }
 }
@@ -733,5 +850,19 @@ window.selectConsultationType = (type) => {
 window.submitAppointment = () => {
     if (window.bookingSystem) {
         window.bookingSystem.submitAppointment();
+    }
+};
+
+// Función global para botón de retroceso
+window.previousStep = () => {
+    if (window.bookingSystem) {
+        window.bookingSystem.goBackStep();
+    }
+};
+
+// Función global para botón de avance
+window.nextStep = () => {
+    if (window.bookingSystem) {
+        window.bookingSystem.goNextStep();
     }
 };

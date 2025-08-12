@@ -3,7 +3,7 @@
 
 const APPS_SCRIPT_CONFIG = {
     // URL del Google Apps Script (VERSIÓN FINAL FUNCIONAL)
-    scriptUrl: 'https://script.google.com/macros/s/AKfycbxwkF_SS8MvOJVO9_FdVwQDq0XXfXjFcW7y6eFleZ899V-w9Ekw7H8JfvhuyxLWCordsQ/exec',
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbxopdhZk-UBDgkBEWDhMKIF2im34MiEvRcrR_uX7-glAP0QgiLojGlknOLJCBE8reSE0A/exec',
     
     // Estado de configuración
     isConfigured: true // ✅ ACTIVADO

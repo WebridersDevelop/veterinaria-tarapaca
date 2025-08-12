@@ -137,10 +137,8 @@ class AppsScriptAPI {
         // Filtrar horarios según duración de consulta
         let slots = schedules[dayName] || [];
         
-        if (consultationType === 'endocrinologia') {
-            // Para endocrinología (60 min), usar slots cada hora
-            slots = slots.filter((time, index) => index % 2 === 0);
-        }
+        // No filtrar slots para endocrinología - permitir todos los horarios de 30 min
+        // El filtrado de disponibilidad se hace en el backend según citas existentes
         
         console.log(`Usando horarios estáticos para ${dayName}:`, slots);
         return slots;

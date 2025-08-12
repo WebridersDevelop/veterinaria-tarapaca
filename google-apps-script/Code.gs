@@ -144,8 +144,13 @@ Object.keys(CONSULTATION_TYPES).join(', ')
 
     // Acceso al calendario
     const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
-    const date = new Date(dateString);
+    
+    // Parsear fecha correctamente para evitar problemas de timezone
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     const dayName = Utilities.formatDate(date, TIMEZONE, 'EEEE').toUpperCase();
+    
+    Logger.log(`🗓️ Fecha parseada: ${dateString} -> ${date.toISOString()} -> Día: ${dayName}`);
 
     Logger.log('📅 Día de la semana:', dayName);
 
@@ -165,17 +170,37 @@ Object.keys(CONSULTATION_TYPES).join(', ')
     // Generar slots de tiempo
     const consultation = CONSULTATION_TYPES[consultationType];
     const duration = consultation.duration;
-    const slots = generateTimeSlots(daySchedule.start, daySchedule.end, duration);
+    const allSlots = generateTimeSlots(daySchedule.start, daySchedule.end, duration);
 
-    Logger.log(`✅ Slots generados: ${slots.length} horarios`);
-    Logger.log('Horarios:', slots);
+    Logger.log(`🕐 Slots generados: ${allSlots.length} horarios`);
+    Logger.log('Todos los horarios:', allSlots);
+
+    // Obtener eventos existentes para esa fecha - usar fecha parseada consistente
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    Logger.log(`🗓️ Buscando eventos entre: ${startOfDay.toISOString()} y ${endOfDay.toISOString()}`);
+    Logger.log(`🗓️ Fecha original: ${dateString}, Date object: ${date.toISOString()}`);
+
+    const existingEvents = calendar.getEvents(startOfDay, endOfDay);
+    Logger.log(`📋 Eventos existentes: ${existingEvents.length}`);
+
+    // Filtrar slots disponibles
+    const availableSlots = filterAvailableSlots(allSlots, existingEvents, dateString, duration);
+
+    Logger.log(`✅ Slots disponibles: ${availableSlots.length} horarios`);
+    Logger.log('Horarios disponibles:', availableSlots);
 
     return {
       success: true,
-      availableSlots: slots,
+      availableSlots: availableSlots,
       date: dateString,
       consultationType: consultationType,
-      message: `${slots.length} horarios disponibles para ${consultation.name}`
+      totalSlots: allSlots.length,
+      occupiedSlots: allSlots.length - availableSlots.length,
+      message: `${availableSlots.length} horarios disponibles para ${consultation.name}`
     };
 
   } catch (error) {
@@ -330,8 +355,8 @@ function generateTimeSlots(startTime, endTime, duration) {
         slots.push(timeString);
       }
 
-      // Avanzar al siguiente slot (mismo intervalo que la duración)
-      current = new Date(current.getTime() + (duration * 60000));
+      // Avanzar al siguiente slot en intervalos de 30 minutos para mayor flexibilidad
+      current = new Date(current.getTime() + (30 * 60000)); // Siempre avanzar 30 min
     }
 
     Logger.log(`✅ Generados ${slots.length} slots:`, slots);
@@ -351,6 +376,88 @@ function parseTime(timeString) {
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
   return date;
+}
+
+/**
+ * Filtrar slots disponibles verificando eventos existentes en el calendario
+ */
+function filterAvailableSlots(allSlots, existingEvents, targetDate, consultationDuration) {
+  try {
+    Logger.log('🔍 Filtrando slots disponibles...');
+    Logger.log('Slots a verificar:', allSlots);
+    Logger.log('Eventos existentes:', existingEvents.length);
+
+    const availableSlots = [];
+
+    for (const timeSlot of allSlots) {
+      const slotTime = parseTimeForDate(timeSlot, targetDate);
+      const slotEndTime = new Date(slotTime.getTime() + (consultationDuration * 60000));
+      
+      Logger.log(`Verificando slot: ${timeSlot} (${slotTime.toISOString()} - ${slotEndTime.toISOString()})`);
+
+      let isAvailable = true;
+
+      // Verificar si este slot se solapa con algún evento existente
+      for (const event of existingEvents) {
+        const eventStart = event.getStartTime();
+        const eventEnd = event.getEndTime();
+
+        Logger.log(`Comparando con evento: ${event.getTitle()} (${eventStart.toISOString()} - ${eventEnd.toISOString()})`);
+
+        // Verificar solapamiento:
+        // El slot está ocupado si:
+        // - El slot comienza antes de que termine el evento Y
+        // - El slot termina después de que comience el evento
+        if (slotTime < eventEnd && slotEndTime > eventStart) {
+          Logger.log(`❌ Slot ${timeSlot} se solapa con evento: ${event.getTitle()}`);
+          isAvailable = false;
+          break;
+        }
+      }
+
+      if (isAvailable) {
+        Logger.log(`✅ Slot ${timeSlot} está disponible`);
+        availableSlots.push(timeSlot);
+      }
+    }
+
+    Logger.log(`🎯 Slots finales disponibles: ${availableSlots.length}/${allSlots.length}`);
+    return availableSlots;
+
+  } catch (error) {
+    Logger.log('❌ Error filtrando slots:', error.toString());
+    // En caso de error, devolver todos los slots
+    return allSlots;
+  }
+}
+
+/**
+ * Parsear tiempo para una fecha específica usando la zona horaria correcta
+ */
+function parseTimeForDate(timeString, targetDate) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  
+  // Parsear la fecha string correctamente
+  let parsedDate;
+  if (typeof targetDate === 'string') {
+    // Si es string como "2025-08-13", parsearlo directamente
+    parsedDate = new Date(targetDate + 'T00:00:00');
+  } else {
+    // Si es Date object, usarlo directamente
+    parsedDate = new Date(targetDate);
+  }
+  
+  // Crear la fecha con la hora específica manteniendo el día correcto
+  const year = parsedDate.getFullYear();
+  const month = parsedDate.getMonth();
+  const day = parsedDate.getDate();
+  
+  // Crear la fecha con la hora específica
+  const result = new Date(year, month, day, hours, minutes, 0, 0);
+  
+  Logger.log(`parseTimeForDate: ${timeString} en ${targetDate} = ${result.toISOString()} (local: ${Utilities.formatDate(result, TIMEZONE, 'yyyy-MM-dd HH:mm:ss')})`);
+  
+  return result;
 }
 
 /**
@@ -415,4 +522,124 @@ function debugCreateAppointment() {
   Logger.log('Resultado:', resultado);
 
   return resultado;
+}
+
+function testAvailabilityWithExistingEvents() {
+  Logger.log('🧪 === TEST DISPONIBILIDAD CON EVENTOS EXISTENTES ===');
+  
+  // Test con una fecha que puede tener eventos
+  const testDate = '2025-08-13'; // Ajustar según necesidad
+  const consultationType = 'general';
+  
+  Logger.log(`Probando disponibilidad para: ${testDate}, tipo: ${consultationType}`);
+  
+  const result = checkAvailability(testDate, consultationType);
+  Logger.log('Resultado completo:', result);
+  
+  if (result.success) {
+    Logger.log(`✅ Total slots posibles: ${result.totalSlots || 'No reportado'}`);
+    Logger.log(`❌ Slots ocupados: ${result.occupiedSlots || 'No reportado'}`);
+    Logger.log(`✅ Slots disponibles: ${result.availableSlots.length}`);
+    Logger.log('Horarios disponibles:', result.availableSlots);
+  } else {
+    Logger.log('❌ Error:', result.error);
+  }
+  
+  return result;
+}
+
+function testWithTemporaryEvent() {
+  Logger.log('🧪 === TEST CON EVENTO TEMPORAL ===');
+  
+  const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+  const testDate = '2025-08-13';
+  
+  // Crear evento temporal usando parseTimeForDate para consistencia
+  const eventStart = parseTimeForDate('11:00', testDate);
+  const eventEnd = parseTimeForDate('11:30', testDate);
+  
+  Logger.log(`Fecha de prueba: ${testDate}`);
+  Logger.log(`Creando evento temporal: ${eventStart.toISOString()} - ${eventEnd.toISOString()}`);
+  Logger.log(`Hora local: ${Utilities.formatDate(eventStart, TIMEZONE, 'yyyy-MM-dd HH:mm:ss')} - ${Utilities.formatDate(eventEnd, TIMEZONE, 'yyyy-MM-dd HH:mm:ss')}`);
+  
+  const tempEvent = calendar.createEvent('TEST - Cita Temporal', eventStart, eventEnd, {
+    description: 'Evento temporal para testing - ELIMINAR'
+  });
+  
+  Logger.log(`✅ Evento temporal creado: ${tempEvent.getId()}`);
+  
+  // Verificar que el evento existe antes de probar
+  const startOfDay = new Date(testDate);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(testDate);
+  endOfDay.setHours(23, 59, 59, 999);
+  
+  const eventsOnDate = calendar.getEvents(startOfDay, endOfDay);
+  Logger.log(`🔍 Verificando eventos en ${testDate}: encontrados ${eventsOnDate.length}`);
+  
+  eventsOnDate.forEach((event, index) => {
+    Logger.log(`Evento ${index + 1}: ${event.getTitle()} (${event.getStartTime().toISOString()} - ${event.getEndTime().toISOString()})`);
+  });
+  
+  // Probar disponibilidad
+  const result = checkAvailability(testDate, 'general');
+  
+  Logger.log('Resultado con evento temporal:', result);
+  Logger.log(`Slots disponibles: ${result.availableSlots.length}/${result.totalSlots}`);
+  Logger.log('Horarios disponibles:', result.availableSlots);
+  Logger.log('¿Falta las 11:00?', !result.availableSlots.includes('11:00'));
+  
+  // Limpiar - eliminar evento temporal
+  tempEvent.deleteEvent();
+  Logger.log('🗑️ Evento temporal eliminado');
+  
+  return result;
+}
+
+function testMondayIssue() {
+  Logger.log('🧪 === TEST ESPECÍFICO PARA LUNES ===');
+  
+  // Probar con el 18 de agosto de 2025 (lunes)
+  const mondayDate = '2025-08-18';
+  
+  Logger.log(`Probando fecha: ${mondayDate}`);
+  
+  // Test manual del parsing de fecha
+  const [year, month, day] = mondayDate.split('-').map(Number);
+  const testDate = new Date(year, month - 1, day);
+  const dayName = Utilities.formatDate(testDate, TIMEZONE, 'EEEE').toUpperCase();
+  
+  Logger.log(`Fecha parseada manualmente: ${testDate.toISOString()}`);
+  Logger.log(`Día detectado: ${dayName}`);
+  Logger.log(`¿Es MONDAY?: ${dayName === 'MONDAY'}`);
+  Logger.log(`Configuración para MONDAY:`, CLINIC_HOURS['MONDAY']);
+  
+  // Probar checkAvailability
+  const result = checkAvailability(mondayDate, 'general');
+  Logger.log('Resultado para lunes:', result);
+  
+  return result;
+}
+
+function testEndocrinologySlots() {
+  Logger.log('🧪 === TEST ENDOCRINOLOGÍA FLEXIBILIDAD ===');
+  
+  const testDate = '2025-08-19'; // Martes
+  
+  // Test 1: Verificar slots para endocrinología
+  Logger.log('1. Probando disponibilidad para endocrinología...');
+  const endoResult = checkAvailability(testDate, 'endocrinologia');
+  Logger.log('Slots endocrinología:', endoResult.availableSlots);
+  
+  // Test 2: Verificar slots para general 
+  Logger.log('2. Probando disponibilidad para general...');
+  const generalResult = checkAvailability(testDate, 'general');
+  Logger.log('Slots general:', generalResult.availableSlots);
+  
+  Logger.log('🎯 Comparación:');
+  Logger.log(`Endocrinología: ${endoResult.availableSlots.length} slots`);
+  Logger.log(`General: ${generalResult.availableSlots.length} slots`);
+  Logger.log('¿Tienen la misma cantidad?', endoResult.availableSlots.length === generalResult.availableSlots.length);
+  
+  return { endocrinologia: endoResult, general: generalResult };
 }

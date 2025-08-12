@@ -5,7 +5,8 @@
       "Bash(cp:*)",
       "Bash(cat:*)",
       "WebFetch(domain:script.google.com)",
-      "WebFetch(domain:script.googleusercontent.com)"
+      "WebFetch(domain:script.googleusercontent.com)",
+      "Bash(node:*)"
     ],
     "deny": []
   }
