@@ -2,7 +2,7 @@
 // ✅ CONFIGURADO con URL real del Apps Script
 
 const APPS_SCRIPT_CONFIG = {
-    // URL del Google Apps Script (NUEVA URL - ACTUALIZADA)
+    // URL del Google Apps Script (NUEVA URL - VERSIÓN ACTUALIZADA)
     scriptUrl: 'https://script.google.com/macros/s/AKfycbzkmzZhgJGx3_Hbtz7HiaZ12cyGEPkn36kmpkvRvR_GSLrEJslLv5nIE3evACC3ruHlCg/exec',
     
     // Estado de configuración
