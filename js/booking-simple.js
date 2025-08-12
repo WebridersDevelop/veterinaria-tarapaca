@@ -218,7 +218,7 @@ class SimpleBookingSystem {
             currentDate.setDate(startDate.getDate() + i);
             
             const isCurrentMonth = currentDate.getMonth() === this.currentMonth.getMonth();
-            const isPast = currentDate < today;
+            const isPast = new Date(currentDate).setHours(0,0,0,0) < new Date(today).setHours(0,0,0,0);
             const isToday = currentDate.toDateString() === today.toDateString();
             const isAvailable = this.isDateAvailable(currentDate);
             
@@ -396,11 +396,28 @@ class SimpleBookingSystem {
         const endTime = this.parseTime(fin);
         const duration = this.config[this.selectedType].duracion;
         
+        // Para filtrar horas pasadas si es el día de hoy
+        const today = new Date();
+        const selectedDate = new Date(this.selectedDate);
+        const isToday = selectedDate.toDateString() === today.toDateString();
+        
         let currentTime = new Date(startTime);
         
         while (currentTime < endTime) {
             const timeString = this.formatTime(currentTime);
-            slots.push(timeString);
+            
+            // Si es hoy, solo agregar horarios futuros (al menos 30 min de adelanto)
+            if (isToday) {
+                const slotTime = new Date(today);
+                slotTime.setHours(...timeString.split(':').map(Number), 0, 0);
+                const thirtyMinutesFromNow = new Date(today.getTime() + 30 * 60000);
+                
+                if (slotTime >= thirtyMinutesFromNow) {
+                    slots.push(timeString);
+                }
+            } else {
+                slots.push(timeString);
+            }
             
             // Avanzar por la duración de la cita
             currentTime.setMinutes(currentTime.getMinutes() + duration);
