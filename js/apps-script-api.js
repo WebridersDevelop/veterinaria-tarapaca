@@ -77,6 +77,11 @@ class AppsScriptAPI {
         try {
             console.log('Creando cita:', appointmentData);
             
+            // DEBUG: Verificar datos antes de enviar
+            console.log('🔍 DATOS ANTES DE ENVIAR:', appointmentData);
+            console.log('🔍 JSON STRING:', JSON.stringify(appointmentData));
+            console.log('🔍 URL ENCODED:', encodeURIComponent(JSON.stringify(appointmentData)));
+            
             // Usar GET con parámetros codificados para evitar CORS
             const params = new URLSearchParams({
                 action: 'createAppointment',
