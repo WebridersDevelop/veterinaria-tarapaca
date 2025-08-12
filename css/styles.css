@@ -1,3 +1,25 @@
+/* Safari compatibility - Define custom colors */
+:root {
+    --vet-orange: #ff9500;
+    --vet-orange-light: #ffb347;
+    --vet-brown: #8B4513;
+    --vet-gray: #f8f9fa;
+}
+
+/* Safari fallback classes */
+.text-vet-orange { color: #ff9500 !important; }
+.text-vet-brown { color: #8B4513 !important; }
+.bg-vet-orange { background-color: #ff9500 !important; }
+.bg-vet-brown { background-color: #8B4513 !important; }
+.border-vet-orange { border-color: #ff9500 !important; }
+.border-vet-brown { border-color: #8B4513 !important; }
+.hover\:bg-vet-orange:hover { background-color: #ff9500 !important; }
+.hover\:bg-vet-brown:hover { background-color: #8B4513 !important; }
+.hover\:text-vet-orange:hover { color: #ff9500 !important; }
+.hover\:text-vet-brown:hover { color: #8B4513 !important; }
+.focus\:ring-vet-orange:focus { --tw-ring-color: #ff9500 !important; }
+.focus\:border-vet-orange:focus { border-color: #ff9500 !important; }
+
 /* Reset y configuración base - Mantenemos solo lo esencial */
 * {
     margin: 0;
@@ -15,9 +37,11 @@ body {
 /* Custom Tailwind Animations */
 @keyframes float {
     0%, 100% { 
+        -webkit-transform: translateY(0px) rotate(0deg);
         transform: translateY(0px) rotate(0deg);
     }
     50% { 
+        -webkit-transform: translateY(-20px) rotate(180deg);
         transform: translateY(-20px) rotate(180deg);
     }
 }
@@ -25,10 +49,12 @@ body {
 @keyframes fade-in-up {
     from {
         opacity: 0;
+        -webkit-transform: translateY(30px);
         transform: translateY(30px);
     }
     to {
         opacity: 1;
+        -webkit-transform: translateY(0);
         transform: translateY(0);
     }
 }
@@ -152,11 +178,15 @@ img[loading="lazy"].loaded {
     width: 32px;
     height: 32px;
     border-radius: 50%;
+    display: -webkit-flex;
     display: flex;
+    -webkit-align-items: center;
     align-items: center;
+    -webkit-justify-content: center;
     justify-content: center;
     font-weight: bold;
     font-size: 14px;
+    -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
     border: 2px solid #e5e7eb;
     background-color: white;
@@ -176,11 +206,13 @@ img[loading="lazy"].loaded {
     background-color: #ff9500;
     border-color: #ff9500;
     color: white;
+    -webkit-transform: scale(1.05);
     transform: scale(1.05);
 }
 
 @media (min-width: 640px) {
     .step-circle.active {
+        -webkit-transform: scale(1.1);
         transform: scale(1.1);
     }
 }
@@ -193,6 +225,35 @@ img[loading="lazy"].loaded {
 
 .step-content {
     animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Estilos para scroll vertical de horarios comprimidos */
+#times-scroll-container {
+    scrollbar-width: thin; /* Firefox - permitir scroll vertical */
+    scrollbar-color: #ff9500 #f1f1f1;
+}
+
+#times-scroll-container::-webkit-scrollbar {
+    width: 6px; /* WebKit - scroll vertical delgado */
+}
+
+#times-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#times-scroll-container::-webkit-scrollbar-thumb {
+    background: #ff9500;
+    border-radius: 3px;
+}
+
+#times-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #e6850e;
+}
+
+/* Smooth scrolling para touch devices */
+#times-scroll-container {
+    -webkit-overflow-scrolling: touch;
 }
 
 @keyframes fadeIn {

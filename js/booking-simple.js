@@ -7,6 +7,7 @@ class SimpleBookingSystem {
         this.selectedDate = null;
         this.selectedTime = null;
         this.currentMonth = new Date();
+        this.currentWeekStart = new Date();
         this.appsScriptAPI = new AppsScriptAPI();
         
         // Configuración de horarios
@@ -88,9 +89,10 @@ class SimpleBookingSystem {
         if (targetStep) {
             targetStep.classList.remove('hidden');
             
-            // Si es paso 3, generar calendario
+            // Si es paso 3, generar calendario horizontal y actualizar info
             if (step === 3) {
-                this.generateCalendar();
+                this.generateHorizontalCalendar();
+                this.updateSelectedServiceInfo();
             }
         }
         
@@ -821,6 +823,197 @@ class SimpleBookingSystem {
             alert('✅ ¡Cita agendada exitosamente!\nRevisaremos tu solicitud y te contactaremos pronto.');
         }
     }
+
+    // Nuevos métodos para calendario horizontal estilo RedSalud
+    generateHorizontalCalendar() {
+        const container = document.getElementById('horizontal-calendar');
+        if (!container) return;
+
+        const today = new Date();
+        const weekStart = new Date(this.currentWeekStart);
+        
+        // Asegurar que empezamos desde lunes
+        const dayOfWeek = weekStart.getDay();
+        const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Lunes = 0
+        weekStart.setDate(weekStart.getDate() - daysToSubtract);
+        
+        let calendarHTML = '';
+        const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        for (let i = 0; i < 7; i++) {
+            const currentDate = new Date(weekStart);
+            currentDate.setDate(weekStart.getDate() + i);
+            
+            const isToday = currentDate.toDateString() === today.toDateString();
+            const isPast = currentDate < today;
+            const isAvailable = this.isDateAvailable(currentDate) && !isPast;
+            const isSelected = this.selectedDate === currentDate.toISOString().split('T')[0];
+            
+            let cardClass = 'flex-shrink-0 w-12 sm:w-14 md:w-16 p-2 sm:p-3 text-center rounded-lg sm:rounded-xl cursor-pointer transition-all duration-200 border-2 ';
+            
+            if (isSelected) {
+                cardClass += 'bg-vet-orange text-white border-vet-orange';
+            } else if (isAvailable) {
+                cardClass += 'bg-white text-gray-700 border-gray-200 hover:border-vet-orange hover:bg-vet-orange/10';
+            } else {
+                cardClass += 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed';
+            }
+            
+            const clickHandler = isAvailable ? `onclick="bookingSystem.selectHorizontalDate('${currentDate.toISOString().split('T')[0]}')"` : '';
+            
+            calendarHTML += `
+                <div class="${cardClass}" ${clickHandler}>
+                    <div class="text-xs font-medium mb-1">${dayNames[i]}</div>
+                    <div class="text-sm sm:text-base md:text-lg font-bold mb-1">${currentDate.getDate()}</div>
+                    <div class="text-xs hidden sm:block">${monthNames[currentDate.getMonth()]}</div>
+                    ${!isAvailable ? '<div class="text-xs text-red-400 mt-1 hidden sm:block">Sin Horas</div>' : ''}
+                </div>
+            `;
+        }
+        
+        container.innerHTML = calendarHTML;
+        
+        // Configurar botones de navegación de semana
+        this.setupWeekNavigation();
+    }
+
+    setupWeekNavigation() {
+        const prevButton = document.getElementById('prev-week');
+        const nextButton = document.getElementById('next-week');
+        
+        if (prevButton) {
+            prevButton.onclick = () => this.changeWeek(-1);
+        }
+        if (nextButton) {
+            nextButton.onclick = () => this.changeWeek(1);
+        }
+    }
+
+    changeWeek(direction) {
+        this.currentWeekStart.setDate(this.currentWeekStart.getDate() + (direction * 7));
+        this.generateHorizontalCalendar();
+    }
+
+    async selectHorizontalDate(dateString) {
+        this.selectedDate = dateString;
+        console.log(`Fecha seleccionada: ${dateString}`);
+        
+        // Regenerar calendario para mostrar selección
+        this.generateHorizontalCalendar();
+        
+        // Mostrar tarjeta de profesional
+        this.showProfessionalCard();
+        
+        try {
+            // Obtener horarios disponibles
+            const availableSlots = await this.appsScriptAPI.checkAvailability(dateString, this.selectedType);
+            this.displayRedSaludTimeSlots(availableSlots);
+        } catch (error) {
+            console.error('Error al obtener disponibilidad:', error);
+            // Usar horarios estáticos como respaldo
+            const [year, month, day] = dateString.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            this.generateTimeSlotsStatic(date);
+        }
+    }
+
+    showProfessionalCard() {
+        const card = document.getElementById('professional-card');
+        if (card) {
+            card.classList.remove('hidden');
+            
+            // Actualizar especialidad según tipo de consulta
+            const specialty = document.getElementById('professional-specialty');
+            if (specialty && this.selectedType) {
+                const specialtyText = this.selectedType === 'endocrinologia' 
+                    ? 'Endocrinología Veterinaria' 
+                    : 'Medicina Veterinaria General';
+                specialty.textContent = specialtyText;
+            }
+        }
+    }
+
+    displayRedSaludTimeSlots(slots) {
+        const container = document.getElementById('available-times');
+        const counter = document.getElementById('available-hours-count');
+        
+        if (!container) return;
+        
+        if (slots.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p>No hay horarios disponibles para esta fecha</p>
+                </div>
+            `;
+            if (counter) counter.textContent = '0';
+            return;
+        }
+        
+        // Actualizar contador
+        if (counter) {
+            counter.textContent = slots.length;
+        }
+        
+        // Generar botones de horarios verticales comprimidos estilo RedSalud
+        let slotsHTML = '';
+        slots.forEach(time => {
+            const isSelected = this.selectedTime === time;
+            const buttonClass = isSelected 
+                ? 'w-full py-3 px-4 bg-green-500 text-white rounded-lg font-medium transition-colors text-base mb-2'
+                : 'w-full py-3 px-4 bg-white text-gray-700 border border-gray-200 rounded-lg font-medium hover:bg-vet-orange/10 hover:border-vet-orange transition-colors text-base mb-2';
+            
+            slotsHTML += `
+                <button onclick="bookingSystem.selectRedSaludTime('${time}')" class="${buttonClass}">
+                    ${time}
+                </button>
+            `;
+        });
+        
+        container.innerHTML = slotsHTML;
+    }
+
+    selectRedSaludTime(time) {
+        this.selectedTime = time;
+        console.log(`Hora seleccionada: ${time}`);
+        
+        // Actualizar visualización
+        this.displayRedSaludTimeSlots(this.getLastSlots());
+        
+        // Mostrar resumen
+        this.showAppointmentSummary();
+        this.enableFinalButton();
+    }
+
+    getLastSlots() {
+        // Método auxiliar para mantener los slots actuales
+        const container = document.getElementById('available-times');
+        const buttons = container.querySelectorAll('button');
+        const slots = [];
+        buttons.forEach(btn => {
+            const text = btn.textContent;
+            const timeMatch = text.match(/(\d{2}:\d{2})/);
+            if (timeMatch) {
+                slots.push(timeMatch[1]);
+            }
+        });
+        return slots;
+    }
+
+    updateSelectedServiceInfo() {
+        if (this.selectedType) {
+            const config = this.config[this.selectedType];
+            const typeElement = document.getElementById('selected-consultation-type');
+            const durationElement = document.getElementById('selected-duration');
+            
+            if (typeElement) typeElement.textContent = config.nombre;
+            if (durationElement) durationElement.textContent = `${config.duracion} minutos`;
+        }
+    }
+
 }
 
 // Inicializar sistema cuando el DOM esté listo

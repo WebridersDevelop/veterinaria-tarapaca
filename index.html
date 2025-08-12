@@ -500,49 +500,117 @@
 
                             <!-- Paso 3: Fecha y Hora desde Google Calendar -->
                             <div id="form-step-3" class="step-content hidden">
-                                <h3 class="text-2xl font-bold text-vet-orange text-center mb-2">DISPONIBILIDAD DE HORARIOS</h3>
-                                <p class="text-gray-600 text-center mb-8">Selecciona la <strong>fecha y hora</strong> que mejor se adapte a tus necesidades:</p>
+                                <h3 class="text-2xl font-bold text-vet-orange text-center mb-2">SELECCIONAR DÍA Y HORA</h3>
+                                <p class="text-gray-600 text-center mb-8">Elige la <strong>fecha y hora</strong> que mejor se adapte a tu horario</p>
                                 
-                                <div class="max-w-6xl mx-auto">
-                                    <div class="grid lg:grid-cols-2 gap-8">
-                                        <!-- Calendario -->
-                                        <div class="bg-gray-50 rounded-2xl p-6">
-                                            <h4 class="text-lg font-bold text-gray-800 mb-4 text-center">📅 Selecciona la Fecha</h4>
-                                            <div id="calendar-container" class="bg-white rounded-xl p-4">
-                                                <!-- Calendario se genera dinámicamente desde Google Calendar -->
-                                                <div class="text-center text-gray-500 py-8">
-                                                    <div class="animate-spin w-8 h-8 border-4 border-vet-orange border-t-transparent rounded-full mx-auto mb-4"></div>
-                                                    <p>Cargando horarios disponibles...</p>
+                                <!-- Filtros -->
+                                <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8 px-4">
+                                    <button class="flex items-center justify-center gap-2 px-4 py-2 border-2 border-vet-orange text-vet-orange rounded-full hover:bg-vet-orange hover:text-white transition-colors text-sm sm:text-base">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                        </svg>
+                                        Filtrar
+                                    </button>
+                                    <button class="flex items-center justify-center gap-2 px-4 py-2 border-2 border-vet-brown text-vet-brown rounded-full hover:bg-vet-brown hover:text-white transition-colors text-sm sm:text-base">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                                        </svg>
+                                        Compartir
+                                    </button>
+                                </div>
+                                
+                                <!-- Calendario Horizontal -->
+                                <div class="mb-8">
+                                    <div class="flex items-center justify-center gap-2 sm:gap-4 mb-4 px-2 sm:px-4 max-w-4xl mx-auto">
+                                        <button id="prev-week" class="flex-shrink-0 p-2 sm:p-3 text-vet-orange hover:bg-vet-orange hover:text-white rounded-full transition-colors">
+                                            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                            </svg>
+                                        </button>
+                                        
+                                        <div id="horizontal-calendar" class="flex gap-1 sm:gap-2 md:gap-3 overflow-x-auto justify-center px-2 sm:px-4">
+                                            <!-- Días se generan dinámicamente -->
+                                        </div>
+                                        
+                                        <button id="next-week" class="flex-shrink-0 p-2 sm:p-3 text-vet-orange hover:bg-vet-orange hover:text-white rounded-full transition-colors">
+                                            <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Información del Servicio Seleccionado -->
+                                <div class="bg-gray-100 rounded-lg p-3 sm:p-4 mb-6 text-center mx-4 sm:mx-0">
+                                    <p class="text-gray-600 text-xs sm:text-sm" id="selected-service-info">
+                                        <span id="selected-consultation-type">Selecciona un tipo de consulta</span> - <span id="selected-duration">-</span>
+                                    </p>
+                                </div>
+
+                                <!-- Tarjeta del Profesional y Horarios -->
+                                <div id="professional-card" class="hidden bg-white rounded-2xl shadow-lg overflow-hidden mx-4 sm:mx-auto max-w-4xl">
+                                    <div class="flex flex-col lg:flex-row">
+                                        <!-- Información del Profesional -->
+                                        <div class="lg:w-1/3 p-4 sm:p-6 bg-gradient-to-br from-vet-orange/10 to-vet-brown/10">
+                                            <div class="text-center">
+                                                <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-vet-orange to-vet-brown rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+                                                    <svg class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                    </svg>
                                                 </div>
+                                                <h3 class="text-base sm:text-lg font-bold text-vet-brown mb-1 sm:mb-2">Dra. Javiera Solis Larenas</h3>
+                                                <p class="text-xs sm:text-sm text-gray-600" id="professional-specialty">Medicina Veterinaria General</p>
+                                                <p class="text-xs text-gray-500 mt-1 sm:mt-2">Veterinaria Tarapacá - Iquique</p>
                                             </div>
                                         </div>
                                         
                                         <!-- Horarios Disponibles -->
-                                        <div class="bg-gray-50 rounded-2xl p-6">
-                                            <h4 class="text-lg font-bold text-gray-800 mb-4 text-center">🕐 Horarios Disponibles</h4>
-                                            <div id="time-selection" class="hidden">
-                                                <div class="mb-4 p-3 bg-white rounded-lg">
-                                                    <p class="text-sm text-gray-600">
-                                                        <strong>Tipo:</strong> <span id="selected-consultation-type">-</span><br>
-                                                        <strong>Duración:</strong> <span id="selected-duration">-</span><br>
-                                                        <strong>Fecha:</strong> <span id="selected-date">-</span>
-                                                    </p>
-                                                </div>
-                                                <div id="available-times" class="grid grid-cols-2 gap-3 bg-white rounded-xl p-4">
-                                                    <!-- Horarios se cargan desde Google Calendar -->
+                                        <div class="lg:w-2/3 p-4 sm:p-6 bg-gradient-to-br from-vet-orange/5 to-vet-brown/5">
+                                            <!-- Contador de horas -->
+                                            <div class="mb-4 text-center">
+                                                <div class="bg-vet-orange/10 text-vet-brown px-3 sm:px-4 py-2 rounded-lg inline-block">
+                                                    <span id="available-hours-count" class="font-bold text-base sm:text-lg">0</span>
+                                                    <span class="text-xs sm:text-sm ml-1">HORAS ESTE DÍA</span>
                                                 </div>
                                             </div>
-                                            <div id="no-date-selected" class="text-center text-gray-400 py-8">
-                                                <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                                <p>Selecciona una fecha para ver horarios disponibles</p>
+
+                                            <!-- Horarios con scroll vertical comprimido -->
+                                            <div class="mb-4">
+                                                <div class="max-h-60 overflow-y-auto" id="times-scroll-container">
+                                                    <div id="available-times" class="space-y-2 sm:space-y-3 pr-2">
+                                                        <!-- Horarios se cargan dinámicamente -->
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Indicador de scroll -->
+                                                <div class="flex justify-center mt-2">
+                                                    <div class="text-xs text-gray-500 flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4 4 4-4m0 6l-4-4-4 4"></path>
+                                                        </svg>
+                                                        Desliza para ver más horarios
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Botones de acción -->
+                                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                                <button class="flex-1 py-2 px-4 border-2 border-vet-orange text-vet-orange rounded-lg hover:bg-vet-orange hover:text-white transition-colors text-xs sm:text-sm">
+                                                    <svg class="w-3 h-3 sm:w-4 sm:h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                                                    </svg>
+                                                    Compartir
+                                                </button>
+                                                <button class="flex-1 py-2 px-4 bg-vet-brown text-white rounded-lg hover:bg-vet-orange transition-colors text-xs sm:text-sm">
+                                                    Ver más horas
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                     
                                     <!-- Resumen de la Cita -->
-                                    <div id="appointment-summary" class="hidden mt-8 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6">
+                                    <div id="appointment-summary" class="hidden mt-6 sm:mt-8 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-4 sm:p-6 mx-4 sm:mx-auto max-w-4xl">
                                         <div class="flex justify-between items-center mb-4">
                                             <h4 class="text-lg font-bold text-gray-800">✅ Resumen de tu Cita</h4>
                                             <button onclick="bookingSystem.prevStep(1); bookingSystem.updateNavigationButtons(1);" class="text-sm text-vet-orange hover:text-vet-brown underline">
